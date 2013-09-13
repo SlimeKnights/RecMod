@@ -1,12 +1,7 @@
 package fuj1n.recmod.client.command;
 
-import java.io.*;
-
-import fuj1n.recmod.RecMod;
-
-import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.PacketDispatcher;
-import cpw.mods.fml.relauncher.Side;
+import fuj1n.recmod.RecMod;
 import java.io.*;
 import java.util.*;
 import net.minecraft.command.*;

@@ -1,19 +1,15 @@
 package fuj1n.recmod.client.event;
 
 import fuj1n.recmod.RecMod;
-
-import net.minecraft.client.gui.GuiPlayerInfo;
-import net.minecraft.scoreboard.*;
-import net.minecraft.util.EnumChatFormatting;
-import org.lwjgl.opengl.GL11;
-
 import java.util.List;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.*;
 import net.minecraft.client.multiplayer.NetClientHandler;
-import net.minecraft.scoreboard.ScoreObjective;
+import net.minecraft.scoreboard.*;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.event.ForgeSubscribe;
+import org.lwjgl.opengl.GL11;
 
 public class EventRenderGame extends Gui {
 

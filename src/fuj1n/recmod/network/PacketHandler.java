@@ -1,16 +1,8 @@
 package fuj1n.recmod.network;
 
-import javax.sql.CommonDataSource;
-
-import cpw.mods.fml.relauncher.Side;
-
-import cpw.mods.fml.common.FMLCommonHandler;
-
-import fuj1n.recmod.RecMod;
-
 import cpw.mods.fml.common.network.*;
+import fuj1n.recmod.RecMod;
 import java.io.*;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.INetworkManager;
 import net.minecraft.network.packet.Packet250CustomPayload;
 

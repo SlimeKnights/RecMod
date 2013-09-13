@@ -1,18 +1,12 @@
 package fuj1n.recmod.network;
 
-import cpw.mods.fml.common.network.*;
-import java.io.*;
-import net.minecraft.network.packet.Packet250CustomPayload;
-
-import fuj1n.recmod.RecMod;
-
+import cpw.mods.fml.common.*;
+import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.relauncher.Side;
-
-import cpw.mods.fml.common.FMLCommonHandler;
-
+import fuj1n.recmod.RecMod;
+import java.io.*;
 import net.minecraft.entity.player.EntityPlayer;
-
-import cpw.mods.fml.common.IPlayerTracker;
+import net.minecraft.network.packet.Packet250CustomPayload;
 
 public class PlayerTracker implements IPlayerTracker{
 
