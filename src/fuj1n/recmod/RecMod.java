@@ -6,19 +6,19 @@ import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.event.*;
 import cpw.mods.fml.common.network.*;
 import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.*;
 import fuj1n.recmod.client.command.CommandRec;
 import fuj1n.recmod.client.event.EventRenderGame;
 import fuj1n.recmod.network.*;
 import java.io.*;
-import java.util.HashMap;
+import java.util.*;
 import net.minecraft.command.ServerCommandManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.MinecraftForge;
 
-@Mod(name="Recording Mod", version="1.0", modid="fuj1n.recmod")
+@Mod(name="Recording Mod", version="1.1", modid="fuj1n.recmod")
 @NetworkMod(clientSideRequired=true, channels = {"recModData", "recModDataC"}, packetHandler=PacketHandler.class, serverSideRequired=false)
 public class RecMod {	
 	@Instance("fuj1n.recmod")
@@ -26,6 +26,9 @@ public class RecMod {
 	
 	private static HashMap<String, Boolean> recorders = new HashMap<String, Boolean>();
 	private static HashMap<String, Boolean> streamers = new HashMap<String, Boolean>();
+	
+	@SideOnly(Side.CLIENT)
+	public boolean showUI = false;
 		
 	@EventHandler
 	public void preinit(FMLPreInitializationEvent event){
@@ -94,6 +97,14 @@ public class RecMod {
 			return false;
 		}
 		return streamers.get(username) != null ? streamers.get(username) : false;
+	}
+	
+	public int calculateNumber(){
+		ArrayList<String> list = new ArrayList<String>();
+		
+		
+		
+		return list.size();
 	}
 	
 	public void removeUnneededData(String username){

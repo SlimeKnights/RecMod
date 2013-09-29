@@ -77,6 +77,8 @@ public class EventRenderGame extends Gui {
 					}
 				}
 			}
+		}else if(RecMod.instance.showUI){
+//			int startX = event.resolution.getScaledWidth() - 30;
 		}
 	}
 

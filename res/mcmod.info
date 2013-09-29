@@ -1,10 +1,10 @@
 [
 {
   "modid": "fuj1n.recmod",
-  "name": "Recording Mod",
+  "name": "Recording Status Mod",
   "description": "Record/Stream status in the players list, /rec <r/s> to toggle",
-  "version": "v1.0",
-  "mcversion": "1.6.2",
+  "version": "v1.1",
+  "mcversion": "1.6.4",
   "url": "",
   "updateUrl": "",
   "authors": [
