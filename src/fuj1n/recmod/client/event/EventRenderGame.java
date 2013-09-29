@@ -6,13 +6,15 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.multiplayer.NetClientHandler;
 import net.minecraft.scoreboard.*;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.*;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.event.ForgeSubscribe;
 import org.lwjgl.opengl.GL11;
 
 public class EventRenderGame extends Gui {
 
+	private ResourceLocation indicators = new ResourceLocation("recmod:textures/gui/indicators.png");
+	
 	@ForgeSubscribe
 	public void onRenderGameOverlay(RenderGameOverlayEvent event) {
 		if (event.type != RenderGameOverlayEvent.ElementType.ALL) {
@@ -66,29 +68,15 @@ public class EventRenderGame extends Gui {
 					int l5 = k3 + mc.fontRenderer.getStringWidth(s3) + 5;
 					int i6 = k3 + j5 - 12 - 5;
 					if (i6 - l5 > 5) {
-						if (RecMod.instance.isPlayerRecording(guiplayerinfo.name)) {
-							String s4 = EnumChatFormatting.RED + "@";
-							mc.fontRenderer.drawStringWithShadow(s4, i6 - mc.fontRenderer.getStringWidth(s4) - infooffset, j3, 16777215);
-						}else{
-							String s4 = EnumChatFormatting.DARK_GRAY + "@";
-							mc.fontRenderer.drawStringWithShadow(s4, i6 - mc.fontRenderer.getStringWidth(s4) - infooffset, j3, 16777215);
-						}
-
-						if (RecMod.instance.isPlayerStreaming(guiplayerinfo.name)) {
-							String s4 = EnumChatFormatting.GREEN + "@";
-							mc.fontRenderer.drawStringWithShadow(s4, i6 - mc.fontRenderer.getStringWidth(s4) - (infooffset - mc.fontRenderer.getStringWidth(s4)), j3, 16777215);
-						}else{
-							String s4 = EnumChatFormatting.DARK_GRAY + "@";
-							mc.fontRenderer.drawStringWithShadow(s4, i6 - mc.fontRenderer.getStringWidth(s4) - (infooffset - mc.fontRenderer.getStringWidth(s4)), j3, 16777215);
-						}
+						mc.getTextureManager().bindTexture(indicators);
+						int indicatorRecIndex = RecMod.instance.isPlayerRecording(guiplayerinfo.name) ? 1 : 0;
+						int indicatorStrIndex = RecMod.instance.isPlayerStreaming(guiplayerinfo.name) ? 2 : 0;
+						
+						drawTexturedModalRect(i6 - 8 - infooffset, j3, indicatorRecIndex * 8, (int)Math.floor(indicatorRecIndex / 32) * 8, 8, 8);
+						drawTexturedModalRect(i6 - 8 - (infooffset - 8), j3, indicatorStrIndex * 8, (int)Math.floor(indicatorStrIndex / 32) * 8, 8, 8);
 					}
 				}
 			}
-
-			// drawRect(k5 - 1, b0 - 1, k5 + j5 * k2, b0 + 9 * l2,
-			// Integer.MIN_VALUE);
-
-			// System.out.println(list);
 		}
 	}
 
