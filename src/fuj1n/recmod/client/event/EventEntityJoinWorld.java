@@ -12,7 +12,7 @@ public class EventEntityJoinWorld {
 	public void onEntityJoin(EntityJoinWorldEvent event){
 		if(event.entity instanceof EntityPlayer){
 			Minecraft mc = Minecraft.getMinecraft().getMinecraft();
-			RecMod.instance.showSelf = !mc.isSingleplayer();
+			RecMod.instance.showSelf = !mc.isSingleplayer() && !RecMod.instance.showSelfDef;
 		}
 	}
 	

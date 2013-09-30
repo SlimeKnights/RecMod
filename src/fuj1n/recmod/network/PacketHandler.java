@@ -36,17 +36,24 @@ public class PacketHandler implements IPacketHandler {
 			RecMod.instance.removeUnneededData(playerName);
 		} else if (packet.channel.equals("recModUI")){
 			boolean isSelf = false;
+			boolean isOverride = false;
 			
 			try{
 				isSelf = inputStream.readBoolean();
+				isOverride = inputStream.readBoolean();
 			}catch(IOException e){
 				e.printStackTrace();
 			}
 			
 			if(isSelf){
 				RecMod.instance.showSelf = !RecMod.instance.showSelf;
+				RecMod.instance.showSelfDef = isOverride ? !RecMod.instance.showSelfDef : RecMod.instance.showSelfDef;
+				
+				RecMod.instance.onUIStateChanged();
 			}else{
 				RecMod.instance.showUI = !RecMod.instance.showUI;
+
+				RecMod.instance.onUIStateChanged();
 			}
 		}
 	}

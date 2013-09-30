@@ -21,7 +21,7 @@ public class CommandRec extends CommandBase {
 
 	@Override
 	public String getCommandUsage(ICommandSender icommandsender) {
-		return "<r/s> (toggle recording or streaming) or <ui> <self> (toggle self UI)";
+		return "<r/s> (toggle recording or streaming) or <ui> <self> [p](toggle self UI)";
 	}
 
 	@Override
@@ -33,9 +33,10 @@ public class CommandRec extends CommandBase {
 			RecMod.instance.updatePlayerInformation(sender, type, flag);
 			spreadData(sender, type, flag);
 
-		} else if(astring.length == 2 && astring[0].equals("ui") && (astring[1].equals("self") || astring[1].equals("sidebar")) && icommandsender instanceof Player){
+		} else if((astring.length == 2 || (astring.length == 3 && astring[2].equals("p"))) && astring[0].equals("ui") && (astring[1].equals("self") || astring[1].equals("sidebar")) && icommandsender instanceof Player){
 			boolean isSelf = astring[1].equals("self");
-			sendUIUpdatePacket((Player)icommandsender, isSelf);
+			boolean isOverride = astring.length == 3 && astring[2].equals("p");
+			sendUIUpdatePacket((Player)icommandsender, isSelf, isOverride);
 			
 		} else {
 			throw new WrongUsageException(getCommandUsage(icommandsender), new Object[0]);
@@ -80,11 +81,12 @@ public class CommandRec extends CommandBase {
 		PacketDispatcher.sendPacketToAllPlayers(packet);
 	}
 	
-	public void sendUIUpdatePacket(Player p, boolean isSelf){
+	public void sendUIUpdatePacket(Player p, boolean isSelf, boolean isOverride){
 		ByteArrayOutputStream bos = new ByteArrayOutputStream(8);
 		DataOutputStream outputStream = new DataOutputStream(bos);
 		try {
 			outputStream.writeBoolean(isSelf);
+			outputStream.writeBoolean(isOverride);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}

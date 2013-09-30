@@ -1,6 +1,8 @@
 package fuj1n.recmod;
 
-import fuj1n.recmod.client.event.EventEntityJoinWorld;
+import java.io.FileNotFoundException;
+
+import java.io.IOException;
 
 import cpw.mods.fml.common.*;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -8,9 +10,9 @@ import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.event.*;
 import cpw.mods.fml.common.network.*;
 import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.relauncher.*;
+import cpw.mods.fml.relauncher.Side;
 import fuj1n.recmod.client.command.CommandRec;
-import fuj1n.recmod.client.event.EventRenderGame;
+import fuj1n.recmod.client.event.*;
 import fuj1n.recmod.network.*;
 import java.io.*;
 import java.util.*;
@@ -31,12 +33,18 @@ public class RecMod {
 	
 	public boolean showSelf = true;
 	public boolean showUI = false;
+	
+	public boolean showSelfDef = false;
 		
+	public File configFile;
+	
 	@EventHandler
 	public void preinit(FMLPreInitializationEvent event){
 		GameRegistry.registerPlayerTracker(new PlayerTracker());
+		configFile = new File(event.getModConfigurationDirectory(), "recmod.ui");
 		
 		if(event.getSide() == Side.CLIENT){
+			readFromFile();
 			MinecraftForge.EVENT_BUS.register(new EventRenderGame());
 			MinecraftForge.EVENT_BUS.register(new EventEntityJoinWorld());
 		}
@@ -60,17 +68,6 @@ public class RecMod {
 		
 		recorders = new HashMap<String, Boolean>();
 		streamers = new HashMap<String, Boolean>();
-//		RecMod.instance.scoreboard = MinecraftServer.getServer().worldServerForDimension(0).getScoreboard();
-//		if(RecMod.instance.scoreboard == null){
-//			System.out.println("[Recording Mod] Unable to obtain scoreboard");
-//			return;
-//		}
-//		if(RecMod.instance.scoreboard.getObjective("isRecording") == null){
-//			RecMod.instance.scoreboard.func_96535_a("isRecording", (ScoreObjectiveCriteria)ScoreObjectiveCriteria.field_96643_a.get("dummy"));
-//		}
-//		if(RecMod.instance.scoreboard.getObjective("isStreaming") == null){
-//			RecMod.instance.scoreboard.func_96535_a("isStreaming", (ScoreObjectiveCriteria)ScoreObjectiveCriteria.field_96643_a.get("dummy"));
-//		}
 		
 		ServerCommandManager handler = (ServerCommandManager)MinecraftServer.getServer().getCommandManager();
 		handler.registerCommand(new CommandRec());
@@ -100,6 +97,51 @@ public class RecMod {
 			return false;
 		}
 		return streamers.get(username) != null ? streamers.get(username) : false;
+	}
+	
+	public void onUIStateChanged(){
+		writeToFile();
+	}
+	
+	public void readFromFile() {
+		if(!configFile.exists()){
+			return;
+		}
+		
+		try {
+			BufferedReader b = new BufferedReader(new FileReader(configFile));
+			String line1 = b.readLine();
+			String line2 = b.readLine();
+			
+			showSelfDef = convertToBoolean(line1);
+			showUI = convertToBoolean(line2);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			//Don't want the massive stacktrace if the file read fails.
+			//e.printStackTrace();
+		}
+	}
+	
+	public boolean convertToBoolean(String s){
+		try{
+			return Boolean.parseBoolean(s);
+		}catch(Exception e){}
+		return false;
+	}
+	
+	public void writeToFile() {
+		configFile.delete();
+		try {
+			configFile.createNewFile();
+			BufferedWriter b = new BufferedWriter(new FileWriter(configFile));
+			b.write(Boolean.toString(showSelfDef));
+			b.newLine();
+			b.write(Boolean.toString(showUI));
+			b.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public int calculateNumber(){
