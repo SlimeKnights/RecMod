@@ -1,6 +1,6 @@
 package fuj1n.recmod.client.command;
 
-import cpw.mods.fml.common.network.PacketDispatcher;
+import cpw.mods.fml.common.network.*;
 import fuj1n.recmod.RecMod;
 import java.io.*;
 import java.util.*;
@@ -21,7 +21,7 @@ public class CommandRec extends CommandBase {
 
 	@Override
 	public String getCommandUsage(ICommandSender icommandsender) {
-		return "<r/s> (toggle recording or streaming)";
+		return "<r/s> (toggle recording or streaming) or <ui> <self> (toggle self UI)";
 	}
 
 	@Override
@@ -33,6 +33,10 @@ public class CommandRec extends CommandBase {
 			RecMod.instance.updatePlayerInformation(sender, type, flag);
 			spreadData(sender, type, flag);
 
+		} else if(astring.length == 2 && astring[0].equals("ui") && (astring[1].equals("self") || astring[1].equals("sidebar")) && icommandsender instanceof Player){
+			boolean isSelf = astring[1].equals("self");
+			sendUIUpdatePacket((Player)icommandsender, isSelf);
+			
 		} else {
 			throw new WrongUsageException(getCommandUsage(icommandsender), new Object[0]);
 		}
@@ -75,16 +79,33 @@ public class CommandRec extends CommandBase {
 		packet.length = bos.size();
 		PacketDispatcher.sendPacketToAllPlayers(packet);
 	}
+	
+	public void sendUIUpdatePacket(Player p, boolean isSelf){
+		ByteArrayOutputStream bos = new ByteArrayOutputStream(8);
+		DataOutputStream outputStream = new DataOutputStream(bos);
+		try {
+			outputStream.writeBoolean(isSelf);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+
+		Packet250CustomPayload packet = new Packet250CustomPayload();
+		packet.channel = "recModUI";
+		packet.data = bos.toByteArray();
+		packet.length = bos.size();
+		PacketDispatcher.sendPacketToPlayer(packet, p);
+	}
 
 	@Override
 	public List addTabCompletionOptions(ICommandSender par1ICommandSender, String[] par2ArrayOfStr) {
 		List l = new ArrayList();
 		if (par2ArrayOfStr.length == 1) {
-			if (par2ArrayOfStr[0].equals("r")) {
-				l.add("s");
-			} else {
-				l.add("r");
-			}
+			l.add("r");
+			l.add("s");
+			l.add("ui");
+		}
+		if(par2ArrayOfStr.length == 2 && par2ArrayOfStr[0].equals("ui")){
+			l.add("self");
 		}
 
 		return l;

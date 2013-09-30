@@ -8,27 +8,27 @@ import java.io.*;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.packet.Packet250CustomPayload;
 
-public class PlayerTracker implements IPlayerTracker{
+public class PlayerTracker implements IPlayerTracker {
 
 	@Override
 	public void onPlayerLogin(EntityPlayer player) {
-		if(FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER){
+		if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) {
 			RecMod.instance.updatePlayerInformation(player.username, 0, false);
 			RecMod.instance.updatePlayerInformation(player.username, 1, false);
 			RecMod.instance.sendDataToPlayer(player);
 		}
 	}
-	
+
 	@Override
 	public void onPlayerLogout(EntityPlayer player) {
-		if(FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER){
+		if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) {
 			removePlayerName(player.username);
 		}
 	}
-	
-	public void removePlayerName(String name){
+
+	public void removePlayerName(String name) {
 		RecMod.instance.removeUnneededData(name);
-				
+
 		ByteArrayOutputStream bos = new ByteArrayOutputStream(8);
 		DataOutputStream outputStream = new DataOutputStream(bos);
 		try {
@@ -45,9 +45,11 @@ public class PlayerTracker implements IPlayerTracker{
 	}
 
 	@Override
-	public void onPlayerChangedDimension(EntityPlayer player) {}
+	public void onPlayerChangedDimension(EntityPlayer player) {
+	}
 
 	@Override
-	public void onPlayerRespawn(EntityPlayer player) {}
+	public void onPlayerRespawn(EntityPlayer player) {
+	}
 
 }

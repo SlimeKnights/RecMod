@@ -1,5 +1,7 @@
 package fuj1n.recmod;
 
+import fuj1n.recmod.client.event.EventEntityJoinWorld;
+
 import cpw.mods.fml.common.*;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
@@ -19,7 +21,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.MinecraftForge;
 
 @Mod(name="Recording Mod", version="1.1", modid="fuj1n.recmod")
-@NetworkMod(clientSideRequired=true, channels = {"recModData", "recModDataC"}, packetHandler=PacketHandler.class, serverSideRequired=false)
+@NetworkMod(clientSideRequired=true, channels = {"recModData", "recModDataC", "recModUI"}, packetHandler=PacketHandler.class, serverSideRequired=false)
 public class RecMod {	
 	@Instance("fuj1n.recmod")
 	public static RecMod instance;
@@ -27,7 +29,7 @@ public class RecMod {
 	private static HashMap<String, Boolean> recorders = new HashMap<String, Boolean>();
 	private static HashMap<String, Boolean> streamers = new HashMap<String, Boolean>();
 	
-	@SideOnly(Side.CLIENT)
+	public boolean showSelf = true;
 	public boolean showUI = false;
 		
 	@EventHandler
@@ -36,6 +38,7 @@ public class RecMod {
 		
 		if(event.getSide() == Side.CLIENT){
 			MinecraftForge.EVENT_BUS.register(new EventRenderGame());
+			MinecraftForge.EVENT_BUS.register(new EventEntityJoinWorld());
 		}
 	}
 	

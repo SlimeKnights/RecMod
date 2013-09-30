@@ -1,5 +1,7 @@
 package fuj1n.recmod.client.event;
 
+import fuj1n.recmod.lib.IndexReference;
+
 import fuj1n.recmod.RecMod;
 import java.util.List;
 import net.minecraft.client.Minecraft;
@@ -69,16 +71,24 @@ public class EventRenderGame extends Gui {
 					int i6 = k3 + j5 - 12 - 5;
 					if (i6 - l5 > 5) {
 						mc.getTextureManager().bindTexture(indicators);
-						int indicatorRecIndex = RecMod.instance.isPlayerRecording(guiplayerinfo.name) ? 1 : 0;
-						int indicatorStrIndex = RecMod.instance.isPlayerStreaming(guiplayerinfo.name) ? 2 : 0;
+						int indicatorRecIndex = RecMod.instance.isPlayerRecording(guiplayerinfo.name) ? IndexReference.ICON_RED_INDEX : IndexReference.ICON_GRAY_INDEX;
+						int indicatorStrIndex = RecMod.instance.isPlayerStreaming(guiplayerinfo.name) ? IndexReference.ICON_GREEN_INDEX : IndexReference.ICON_GRAY_INDEX;
 						
 						drawTexturedModalRect(i6 - 8 - infooffset, j3, indicatorRecIndex * 8, (int)Math.floor(indicatorRecIndex / 32) * 8, 8, 8);
 						drawTexturedModalRect(i6 - 8 - (infooffset - 8), j3, indicatorStrIndex * 8, (int)Math.floor(indicatorStrIndex / 32) * 8, 8, 8);
 					}
 				}
 			}
-		}else if(RecMod.instance.showUI){
-//			int startX = event.resolution.getScaledWidth() - 30;
+		}else if(RecMod.instance.showSelf){
+			int x = event.resolution.getScaledWidth() - 32;
+			int y = 0;
+			
+			int indicatorRecIndex = RecMod.instance.isPlayerRecording(mc.thePlayer.username) ? 1 : 0;
+			int indicatorStrIndex = RecMod.instance.isPlayerStreaming(mc.thePlayer.username) ? 2 : 0;
+			
+			mc.getTextureManager().bindTexture(indicators);
+			drawTexturedModalRect(x, y, indicatorRecIndex * 16, (int)Math.floor(indicatorRecIndex / 32) * 16 + IndexReference.RESOLUTION_SPLIT_Y, 16, 16);
+			drawTexturedModalRect(x + 16, y, indicatorStrIndex * 16, (int)Math.floor(indicatorStrIndex / 32) * 16 + IndexReference.RESOLUTION_SPLIT_Y, 16, 16);
 		}
 	}
 

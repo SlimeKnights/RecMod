@@ -34,6 +34,20 @@ public class PacketHandler implements IPacketHandler {
 				e.printStackTrace();
 			}
 			RecMod.instance.removeUnneededData(playerName);
+		} else if (packet.channel.equals("recModUI")){
+			boolean isSelf = false;
+			
+			try{
+				isSelf = inputStream.readBoolean();
+			}catch(IOException e){
+				e.printStackTrace();
+			}
+			
+			if(isSelf){
+				RecMod.instance.showSelf = !RecMod.instance.showSelf;
+			}else{
+				RecMod.instance.showUI = !RecMod.instance.showUI;
+			}
 		}
 	}
 }
