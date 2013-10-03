@@ -34,6 +34,8 @@ public class RecMod {
 	public boolean showSelf = true;
 	public boolean showUI = false;
 	
+	public String sheetLocation = "recmod:textures/sheets/indicators.png";
+	
 	public boolean showSelfDef = false;
 		
 	public File configFile;
@@ -103,6 +105,10 @@ public class RecMod {
 		writeToFile();
 	}
 	
+	public void onSheetChanged(){
+		writeToFile();
+	}
+	
 	public void readFromFile() {
 		if(!configFile.exists()){
 			return;
@@ -112,9 +118,11 @@ public class RecMod {
 			BufferedReader b = new BufferedReader(new FileReader(configFile));
 			String line1 = b.readLine();
 			String line2 = b.readLine();
+			String line3 = b.readLine();
 			
 			showSelfDef = convertToBoolean(line1);
 			showUI = convertToBoolean(line2);
+			sheetLocation = line3 != null && !line3.equals("") ? line3 : sheetLocation;
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -138,6 +146,8 @@ public class RecMod {
 			b.write(Boolean.toString(showSelfDef));
 			b.newLine();
 			b.write(Boolean.toString(showUI));
+			b.newLine();
+			b.write(sheetLocation);
 			b.close();
 		} catch (IOException e) {
 			e.printStackTrace();

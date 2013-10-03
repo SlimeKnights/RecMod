@@ -15,10 +15,16 @@ import org.lwjgl.opengl.GL11;
 
 public class EventRenderGame extends Gui {
 
-	private ResourceLocation indicators = new ResourceLocation("recmod:textures/gui/indicators.png");
+	private String sheetLocation = RecMod.instance.sheetLocation;
+	private ResourceLocation indicators = new ResourceLocation(sheetLocation);
 	
 	@ForgeSubscribe
 	public void onRenderGameOverlay(RenderGameOverlayEvent event) {
+		if(!sheetLocation.equals(RecMod.instance.sheetLocation)){
+			sheetLocation = RecMod.instance.sheetLocation;
+			indicators = new ResourceLocation(sheetLocation);
+		}
+		
 		if (event.type != RenderGameOverlayEvent.ElementType.ALL) {
 			return;
 		}

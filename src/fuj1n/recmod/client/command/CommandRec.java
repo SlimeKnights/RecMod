@@ -26,18 +26,22 @@ public class CommandRec extends CommandBase {
 
 	@Override
 	public void processCommand(ICommandSender icommandsender, String[] astring) {
+		if(icommandsender.getCommandSenderName().equals("Server")){
+			throw new CommandException("Only players are allowed to perform this command.", new Object[0]);
+		}
+		
 		if (astring.length == 1 && (astring[0].equals("r") || astring[0].equals("s"))) {
 			String sender = icommandsender.getCommandSenderName();
 			int type = astring[0].equals("r") ? 0 : 1;
 			boolean flag = astring[0].equals("r") ? !RecMod.instance.isPlayerRecording(sender) : !RecMod.instance.isPlayerStreaming(sender);
 			RecMod.instance.updatePlayerInformation(sender, type, flag);
 			spreadData(sender, type, flag);
-
 		} else if((astring.length == 2 || (astring.length == 3 && astring[2].equals("p"))) && astring[0].equals("ui") && (astring[1].equals("self") || astring[1].equals("sidebar")) && icommandsender instanceof Player){
 			boolean isSelf = astring[1].equals("self");
 			boolean isOverride = astring.length == 3 && astring[2].equals("p");
 			sendUIUpdatePacket((Player)icommandsender, isSelf, isOverride);
-			
+		} else if(astring.length == 2 && astring[0].equals("sheet")){
+			sendSheetChangePacket((Player)icommandsender, astring[1]);
 		} else {
 			throw new WrongUsageException(getCommandUsage(icommandsender), new Object[0]);
 		}
@@ -85,6 +89,7 @@ public class CommandRec extends CommandBase {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream(8);
 		DataOutputStream outputStream = new DataOutputStream(bos);
 		try {
+			outputStream.writeInt(0);
 			outputStream.writeBoolean(isSelf);
 			outputStream.writeBoolean(isOverride);
 		} catch (Exception ex) {
@@ -98,6 +103,23 @@ public class CommandRec extends CommandBase {
 		PacketDispatcher.sendPacketToPlayer(packet, p);
 	}
 
+	public void sendSheetChangePacket(Player p, String newSheet){
+		ByteArrayOutputStream bos = new ByteArrayOutputStream(8);
+		DataOutputStream outputStream = new DataOutputStream(bos);
+		try {
+			outputStream.writeInt(1);
+			outputStream.writeUTF(newSheet);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+
+		Packet250CustomPayload packet = new Packet250CustomPayload();
+		packet.channel = "recModUI";
+		packet.data = bos.toByteArray();
+		packet.length = bos.size();
+		PacketDispatcher.sendPacketToPlayer(packet, p);
+	}
+	
 	@Override
 	public List addTabCompletionOptions(ICommandSender par1ICommandSender, String[] par2ArrayOfStr) {
 		List l = new ArrayList();
@@ -105,9 +127,14 @@ public class CommandRec extends CommandBase {
 			l.add("r");
 			l.add("s");
 			l.add("ui");
-		}
-		if(par2ArrayOfStr.length == 2 && par2ArrayOfStr[0].equals("ui")){
+			l.add("sheet");
+		}else if(par2ArrayOfStr.length == 2 && par2ArrayOfStr[0].equals("ui")){
 			l.add("self");
+		}else if(par2ArrayOfStr.length == 2 && par2ArrayOfStr[0].equals("sheet")){
+			l.add("recmod:textures/sheets/indicators.png");
+			l.add("recmod:textures/sheets/indicatorsx2.png");
+		}else if(par2ArrayOfStr.length == 3 && par2ArrayOfStr[1].equals("self")){
+			l.add("p");
 		}
 
 		return l;
