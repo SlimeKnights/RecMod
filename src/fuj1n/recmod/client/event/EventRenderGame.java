@@ -80,7 +80,7 @@ public class EventRenderGame extends Gui {
 						int indicatorRecIndex = RecMod.instance.isPlayerRecording(guiplayerinfo.name) ? IndexReference.ICON_RED_INDEX : IndexReference.ICON_GRAY_INDEX;
 						int indicatorStrIndex = RecMod.instance.isPlayerStreaming(guiplayerinfo.name) ? IndexReference.ICON_GREEN_INDEX : IndexReference.ICON_GRAY_INDEX;
 						
-						drawTexturedModalRect(i6 - 8 - infooffset, j3, indicatorRecIndex * 8, (int)Math.floor(indicatorRecIndex / 32) * 8, 8, 8);
+						drawTexturedModalRect(i6 - 8 - infooffset, j3, indicatorRecIndex < 32 ? indicatorRecIndex * 8 : indicatorRecIndex * 8 /*Better equation here*/, (int)Math.floor(indicatorRecIndex / 32) * 8, 8, 8);
 						drawTexturedModalRect(i6 - 8 - (infooffset - 8), j3, indicatorStrIndex * 8, (int)Math.floor(indicatorStrIndex / 32) * 8, 8, 8);
 					}
 				}
@@ -93,8 +93,8 @@ public class EventRenderGame extends Gui {
 			int indicatorStrIndex = RecMod.instance.isPlayerStreaming(mc.thePlayer.username) ? 2 : 0;
 			
 			mc.getTextureManager().bindTexture(indicators);
-			drawTexturedModalRect(x, y, indicatorRecIndex * 16, (int)Math.floor(indicatorRecIndex / 32) * 16 + IndexReference.RESOLUTION_SPLIT_Y, 16, 16);
-			drawTexturedModalRect(x + 16, y, indicatorStrIndex * 16, (int)Math.floor(indicatorStrIndex / 32) * 16 + IndexReference.RESOLUTION_SPLIT_Y, 16, 16);
+			drawTexturedModalRect(x, y, indicatorRecIndex * 16, (int)Math.floor(indicatorRecIndex / 16) * 16 + IndexReference.RESOLUTION_SPLIT_Y, 16, 16);
+			drawTexturedModalRect(x + 16, y, indicatorStrIndex * 16, (int)Math.floor(indicatorStrIndex / 16) * 16 + IndexReference.RESOLUTION_SPLIT_Y, 16, 16);
 		}
 	}
 
