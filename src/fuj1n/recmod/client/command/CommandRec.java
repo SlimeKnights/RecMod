@@ -21,7 +21,7 @@ public class CommandRec extends CommandBase {
 
 	@Override
 	public String getCommandUsage(ICommandSender icommandsender) {
-		return "<r/s> (toggle recording or streaming) or <ui> <self> [p](toggle self UI)";
+		return "<r/s> (toggle recording or streaming) or <ui> <self> [p](toggle self UI) or <sheet> <sheetname> (replace the sheet used)";
 	}
 
 	@Override

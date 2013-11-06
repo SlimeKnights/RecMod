@@ -1,5 +1,7 @@
 package fuj1n.recmod.client.event;
 
+import org.lwjgl.input.Keyboard;
+
 import fuj1n.recmod.lib.IndexReference;
 
 import fuj1n.recmod.RecMod;
@@ -29,8 +31,7 @@ public class EventRenderGame extends Gui {
 			return;
 		}
 		Minecraft mc = Minecraft.getMinecraft();
-		ScoreObjective scoreobjective = mc.theWorld.getScoreboard().func_96539_a(0);
-		if (mc.gameSettings.keyBindPlayerList.pressed && (!mc.isIntegratedServerRunning() || mc.thePlayer.sendQueue.playerInfoList.size() > 1 || scoreobjective != null)) {
+		if (mc.gameSettings.keyBindPlayerList.pressed && (!mc.isIntegratedServerRunning() || mc.thePlayer.sendQueue.playerInfoList.size() > 1)) {
 			NetClientHandler netclienthandler = mc.thePlayer.sendQueue;
 			List list = netclienthandler.playerInfoList;
 
@@ -85,7 +86,7 @@ public class EventRenderGame extends Gui {
 					}
 				}
 			}
-		}else if(RecMod.instance.showSelf){
+		}else if(!mc.gameSettings.keyBindPlayerList.pressed && RecMod.instance.showSelf){
 			int x = event.resolution.getScaledWidth() - 32;
 			int y = 0;
 			

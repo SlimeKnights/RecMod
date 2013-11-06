@@ -1,9 +1,5 @@
 package fuj1n.recmod;
 
-import java.io.FileNotFoundException;
-
-import java.io.IOException;
-
 import cpw.mods.fml.common.*;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
@@ -13,6 +9,7 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import fuj1n.recmod.client.command.CommandRec;
 import fuj1n.recmod.client.event.*;
+import fuj1n.recmod.client.keybind.KeyHandlerRecMod;
 import fuj1n.recmod.network.*;
 import java.io.*;
 import java.util.*;
@@ -49,6 +46,9 @@ public class RecMod {
 			readFromFile();
 			MinecraftForge.EVENT_BUS.register(new EventRenderGame());
 			MinecraftForge.EVENT_BUS.register(new EventEntityJoinWorld());
+			
+			//WIP
+//			KeyHandlerRecMod.registerSelf();
 		}
 	}
 	
