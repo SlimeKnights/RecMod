@@ -1,5 +1,7 @@
 package fuj1n.recmod;
 
+import fuj1n.recmod.command.CommandRec;
+
 import cpw.mods.fml.common.*;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
@@ -7,7 +9,6 @@ import cpw.mods.fml.common.event.*;
 import cpw.mods.fml.common.network.*;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
-import fuj1n.recmod.client.command.CommandRec;
 import fuj1n.recmod.client.event.*;
 import fuj1n.recmod.client.keybind.KeyHandlerRecMod;
 import fuj1n.recmod.network.*;
@@ -19,7 +20,7 @@ import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.MinecraftForge;
 
-@Mod(name="Recording Mod", version="1.1", modid="fuj1n.recmod")
+@Mod(name="Recording Mod", version="1.2", modid="fuj1n.recmod")
 @NetworkMod(clientSideRequired=true, channels = {"recModData", "recModDataC", "recModUI"}, packetHandler=PacketHandler.class, serverSideRequired=false)
 public class RecMod {	
 	@Instance("fuj1n.recmod")

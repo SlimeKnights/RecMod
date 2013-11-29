@@ -1,4 +1,4 @@
-package fuj1n.recmod.client.command;
+package fuj1n.recmod.command;
 
 import cpw.mods.fml.common.network.*;
 import fuj1n.recmod.RecMod;
@@ -6,6 +6,9 @@ import java.io.*;
 import java.util.*;
 import net.minecraft.command.*;
 import net.minecraft.network.packet.Packet250CustomPayload;
+import net.minecraft.network.rcon.RConConsoleSource;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.ChatMessageComponent;
 
 public class CommandRec extends CommandBase {
 
@@ -21,12 +24,21 @@ public class CommandRec extends CommandBase {
 
 	@Override
 	public String getCommandUsage(ICommandSender icommandsender) {
-		return "<r/s> (toggle recording or streaming) or <ui> <self> [p](toggle self UI) or <sheet> <sheetname> (replace the sheet used)";
+		icommandsender.sendChatToPlayer(ChatMessageComponent.createFromText("\u00A7cRec Usage: "));
+		icommandsender.sendChatToPlayer(ChatMessageComponent.createFromText("\u00A7c<gui> (displays an easy to use GUI)"));
+		icommandsender.sendChatToPlayer(ChatMessageComponent.createFromText("\u00A7c<r/s> (toggle recording or streaming"));
+		icommandsender.sendChatToPlayer(ChatMessageComponent.createFromText("\u00A7c<ui> <self> [p] (toggle self ui - p toggles disabled by default)"));
+		icommandsender.sendChatToPlayer(ChatMessageComponent.createFromText("\u00A7c<sheet> <sheetname> (replace the texture sheet used)"));
+		return "Wut?";
 	}
 
+	public void onWrongUsage(ICommandSender icommandsender) {
+		getCommandUsage(icommandsender);
+	}
+	
 	@Override
 	public void processCommand(ICommandSender icommandsender, String[] astring) {
-		if(icommandsender.getCommandSenderName().equals("Server")){
+		if(icommandsender instanceof MinecraftServer || icommandsender instanceof RConConsoleSource){
 			throw new CommandException("Only players are allowed to perform this command.", new Object[0]);
 		}
 		
@@ -42,8 +54,10 @@ public class CommandRec extends CommandBase {
 			sendUIUpdatePacket((Player)icommandsender, isSelf, isOverride);
 		} else if(astring.length == 2 && astring[0].equals("sheet")){
 			sendSheetChangePacket((Player)icommandsender, astring[1]);
+		} else if(astring.length == 1 && astring[0].equals("gui")){
+			
 		} else {
-			throw new WrongUsageException(getCommandUsage(icommandsender), new Object[0]);
+			onWrongUsage(icommandsender);
 		}
 	}
 

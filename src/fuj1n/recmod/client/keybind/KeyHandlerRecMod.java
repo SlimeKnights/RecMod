@@ -26,6 +26,7 @@ public class KeyHandlerRecMod extends KeyHandler{
 
 	@Override
 	public void keyDown(EnumSet<TickType> types, KeyBinding kb, boolean tickEnd, boolean isRepeat) {
+		System.out.println("bind");
 		if(mc.gameSettings.keyBindPlayerList.pressed){
 			if(kb == keyBindings[0] && !cancelledBinds[0]){
 				cancelledBinds[0] = true;
