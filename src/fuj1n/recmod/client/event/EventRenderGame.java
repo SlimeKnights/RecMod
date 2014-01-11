@@ -86,7 +86,7 @@ public class EventRenderGame extends Gui {
 					}
 				}
 			}
-		}else if(!mc.gameSettings.keyBindPlayerList.pressed && RecMod.instance.showSelf){
+		}else if(!mc.gameSettings.keyBindPlayerList.pressed && RecMod.instance.showSelf && mc.currentScreen == null){
 			int x = event.resolution.getScaledWidth() - 32;
 			int y = 0;
 			

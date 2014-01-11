@@ -28,6 +28,7 @@ public class KeyHandlerRecMod extends KeyHandler {
 
 	@Override
 	public void keyUp(EnumSet<TickType> types, KeyBinding kb, boolean tickEnd) {
+		if(mc.theWorld != null && mc.currentScreen == null && /*mc.gameSettings.keyBindPlayerList.pressed &&*/ (!mc.isIntegratedServerRunning() || mc.thePlayer.sendQueue.playerInfoList.size() > 1))
 		if(b){
 			if (kb == keyBindings[0]) {
 				mc.thePlayer.sendChatMessage("/rec r");
