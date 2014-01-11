@@ -49,7 +49,7 @@ public class RecMod {
 			MinecraftForge.EVENT_BUS.register(new EventEntityJoinWorld());
 			
 			//WIP
-//			KeyHandlerRecMod.registerSelf();
+			KeyHandlerRecMod.registerSelf();
 		}
 	}
 	
