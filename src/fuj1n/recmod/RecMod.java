@@ -20,7 +20,7 @@ import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.MinecraftForge;
 
-@Mod(name="Recording Mod", version="1.2", modid="fuj1n.recmod")
+@Mod(name="Recording Status Mod", version="1.3", modid="fuj1n.recmod")
 @NetworkMod(clientSideRequired=true, channels = {"recModData", "recModDataC", "recModUI"}, packetHandler=PacketHandler.class, serverSideRequired=false)
 public class RecMod {	
 	@Instance("fuj1n.recmod")
