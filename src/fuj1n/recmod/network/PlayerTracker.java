@@ -13,8 +13,8 @@ public class PlayerTracker implements IPlayerTracker {
 	@Override
 	public void onPlayerLogin(EntityPlayer player) {
 		if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) {
-			RecMod.instance.updatePlayerInformation(player.username, 0, false);
-			RecMod.instance.updatePlayerInformation(player.username, 1, false);
+			RecMod.instance.updatePlayerInformation(player.getCommandSenderName(), 0, false);
+			RecMod.instance.updatePlayerInformation(player.getCommandSenderName(), 1, false);
 			RecMod.instance.sendDataToPlayer(player);
 		}
 	}
@@ -22,7 +22,7 @@ public class PlayerTracker implements IPlayerTracker {
 	@Override
 	public void onPlayerLogout(EntityPlayer player) {
 		if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) {
-			removePlayerName(player.username);
+			removePlayerName(player.getCommandSenderName());
 		}
 	}
 
