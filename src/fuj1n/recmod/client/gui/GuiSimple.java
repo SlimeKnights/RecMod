@@ -17,7 +17,7 @@ public class GuiSimple extends GuiContainer{
 
 	@Override
 	public void drawGuiContainerForegroundLayer(int par1, int par2) {
-        this.fontRenderer.drawString("Simple Gui", 8, this.ySize - 96 + 2, 4210752);
+        this.fontRendererObj.drawString("Simple Gui", 8, this.ySize - 96 + 2, 4210752);
 	}
 	
 	@Override

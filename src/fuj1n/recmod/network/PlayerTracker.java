@@ -1,55 +1,35 @@
 package fuj1n.recmod.network;
 
-import cpw.mods.fml.common.*;
-import cpw.mods.fml.common.network.PacketDispatcher;
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
+import cpw.mods.fml.common.gameevent.PlayerEvent.PlayerLoggedOutEvent;
 import cpw.mods.fml.relauncher.Side;
 import fuj1n.recmod.RecMod;
-import java.io.*;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.network.packet.Packet250CustomPayload;
+import fuj1n.recmod.network.packet.PacketRemovePlayer;
 
-public class PlayerTracker implements IPlayerTracker {
+public class PlayerTracker {
 
-	@Override
-	public void onPlayerLogin(EntityPlayer player) {
+	@SubscribeEvent
+	public void onPlayerLogin(PlayerLoggedInEvent event) {
 		if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) {
-			RecMod.instance.updatePlayerInformation(player.getCommandSenderName(), 0, false);
-			RecMod.instance.updatePlayerInformation(player.getCommandSenderName(), 1, false);
-			RecMod.instance.sendDataToPlayer(player);
+			RecMod.instance.updatePlayerInformation(event.player.getCommandSenderName(), 0, false);
+			RecMod.instance.updatePlayerInformation(event.player.getCommandSenderName(), 1, false);
+			RecMod.instance.sendDataToPlayer(event.player);
 		}
 	}
 
-	@Override
-	public void onPlayerLogout(EntityPlayer player) {
+	@SubscribeEvent
+	public void onPlayerLogout(PlayerLoggedOutEvent event) {
 		if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) {
-			removePlayerName(player.getCommandSenderName());
+			removePlayerName(event.player.getCommandSenderName());
 		}
 	}
 
 	public void removePlayerName(String name) {
 		RecMod.instance.removeUnneededData(name);
 
-		ByteArrayOutputStream bos = new ByteArrayOutputStream(8);
-		DataOutputStream outputStream = new DataOutputStream(bos);
-		try {
-			outputStream.writeUTF(name);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-
-		Packet250CustomPayload packet = new Packet250CustomPayload();
-		packet.channel = "recModDataC";
-		packet.data = bos.toByteArray();
-		packet.length = bos.size();
-		PacketDispatcher.sendPacketToAllPlayers(packet);
+		PacketRemovePlayer pckt = new PacketRemovePlayer(name);
+		RecMod.packetPipeline.sendToAll(pckt);
 	}
-
-	@Override
-	public void onPlayerChangedDimension(EntityPlayer player) {
-	}
-
-	@Override
-	public void onPlayerRespawn(EntityPlayer player) {
-	}
-
 }

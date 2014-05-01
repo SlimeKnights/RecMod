@@ -1,14 +1,15 @@
 package fuj1n.recmod.command;
 
-import cpw.mods.fml.common.network.*;
-import fuj1n.recmod.RecMod;
-import java.io.*;
 import java.util.*;
+
+import fuj1n.recmod.RecMod;
+import fuj1n.recmod.network.packet.*;
+import ibxm.Player;
 import net.minecraft.command.*;
-import net.minecraft.network.packet.Packet250CustomPayload;
+import net.minecraft.entity.player.*;
 import net.minecraft.network.rcon.RConConsoleSource;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.ChatMessageComponent;
+import net.minecraft.util.ChatComponentText;
 
 public class CommandRec extends CommandBase {
 
@@ -24,11 +25,11 @@ public class CommandRec extends CommandBase {
 
 	@Override
 	public String getCommandUsage(ICommandSender icommandsender) {
-		icommandsender.sendChatToPlayer(ChatMessageComponent.createFromText("\u00A7cRec Usage: "));
-		icommandsender.sendChatToPlayer(ChatMessageComponent.createFromText("\u00A7c<gui> (displays an easy to use GUI)"));
-		icommandsender.sendChatToPlayer(ChatMessageComponent.createFromText("\u00A7c<r/s> (toggle recording or streaming"));
-		icommandsender.sendChatToPlayer(ChatMessageComponent.createFromText("\u00A7c<ui> <self> [p] (toggle self ui - p toggles disabled by default)"));
-		icommandsender.sendChatToPlayer(ChatMessageComponent.createFromText("\u00A7c<sheet> <sheetname> (replace the texture sheet used)"));
+		icommandsender.addChatMessage(new ChatComponentText("\u00A7cRec Usage: "));
+		icommandsender.addChatMessage(new ChatComponentText("\u00A7c<gui> (displays an easy to use GUI)"));
+		icommandsender.addChatMessage(new ChatComponentText("\u00A7c<r/s> (toggle recording or streaming"));
+		icommandsender.addChatMessage(new ChatComponentText("\u00A7c<ui> <self> [p] (toggle self ui - p toggles disabled by default)"));
+		icommandsender.addChatMessage(new ChatComponentText("\u00A7c<sheet> <sheetname> (replace the texture sheet used)"));
 		return "Wut?";
 	}
 
@@ -51,9 +52,9 @@ public class CommandRec extends CommandBase {
 		} else if((astring.length == 2 || (astring.length == 3 && astring[2].equals("p"))) && astring[0].equals("ui") && (astring[1].equals("self") || astring[1].equals("sidebar")) && icommandsender instanceof Player){
 			boolean isSelf = astring[1].equals("self");
 			boolean isOverride = astring.length == 3 && astring[2].equals("p");
-			sendUIUpdatePacket((Player)icommandsender, isSelf, isOverride);
+			sendUIUpdatePacket((EntityPlayer)icommandsender, isSelf, isOverride);
 		} else if(astring.length == 2 && astring[0].equals("sheet")){
-			sendSheetChangePacket((Player)icommandsender, astring[1]);
+			sendSheetChangePacket((EntityPlayer)icommandsender, astring[1]);
 		} else if(astring.length == 1 && astring[0].equals("gui")){
 			
 		} else {
@@ -82,56 +83,22 @@ public class CommandRec extends CommandBase {
 	// }
 
 	public void spreadData(String playerName, int typeData, boolean flag) {
-		ByteArrayOutputStream bos = new ByteArrayOutputStream(8);
-		DataOutputStream outputStream = new DataOutputStream(bos);
-		try {
-			outputStream.writeUTF(playerName);
-			outputStream.writeInt(typeData);
-			outputStream.writeBoolean(flag);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-
-		Packet250CustomPayload packet = new Packet250CustomPayload();
-		packet.channel = "recModData";
-		packet.data = bos.toByteArray();
-		packet.length = bos.size();
-		PacketDispatcher.sendPacketToAllPlayers(packet);
+		PacketUpdatePlayerStatus pckt = new PacketUpdatePlayerStatus(playerName, typeData, flag);
+		RecMod.packetPipeline.sendToAll(pckt);
 	}
 	
-	public void sendUIUpdatePacket(Player p, boolean isSelf, boolean isOverride){
-		ByteArrayOutputStream bos = new ByteArrayOutputStream(8);
-		DataOutputStream outputStream = new DataOutputStream(bos);
-		try {
-			outputStream.writeInt(0);
-			outputStream.writeBoolean(isSelf);
-			outputStream.writeBoolean(isOverride);
-		} catch (Exception ex) {
-			ex.printStackTrace();
+	public void sendUIUpdatePacket(EntityPlayer p, boolean isSelf, boolean isOverride){
+		if(p instanceof EntityPlayerMP){
+			PacketChangeUISettings pckt = new PacketChangeUISettings(isSelf, isOverride);
+			RecMod.packetPipeline.sendTo(pckt, (EntityPlayerMP)p);
 		}
-
-		Packet250CustomPayload packet = new Packet250CustomPayload();
-		packet.channel = "recModUI";
-		packet.data = bos.toByteArray();
-		packet.length = bos.size();
-		PacketDispatcher.sendPacketToPlayer(packet, p);
 	}
 
-	public void sendSheetChangePacket(Player p, String newSheet){
-		ByteArrayOutputStream bos = new ByteArrayOutputStream(8);
-		DataOutputStream outputStream = new DataOutputStream(bos);
-		try {
-			outputStream.writeInt(1);
-			outputStream.writeUTF(newSheet);
-		} catch (Exception ex) {
-			ex.printStackTrace();
+	public void sendSheetChangePacket(EntityPlayer p, String newSheet){
+		if(p instanceof EntityPlayerMP){
+			PacketChangeUISheet pckt = new PacketChangeUISheet(newSheet);
+			RecMod.packetPipeline.sendTo(pckt, (EntityPlayerMP)p);
 		}
-
-		Packet250CustomPayload packet = new Packet250CustomPayload();
-		packet.channel = "recModUI";
-		packet.data = bos.toByteArray();
-		packet.length = bos.size();
-		PacketDispatcher.sendPacketToPlayer(packet, p);
 	}
 	
 	@Override

@@ -1,26 +1,25 @@
 package fuj1n.recmod.client.event;
 
-import org.lwjgl.input.Keyboard;
-
-import fuj1n.recmod.lib.IndexReference;
-
-import fuj1n.recmod.RecMod;
 import java.util.List;
+
+import org.lwjgl.opengl.GL11;
+
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import fuj1n.recmod.RecMod;
+import fuj1n.recmod.lib.IndexReference;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.*;
-import net.minecraft.client.multiplayer.NetClientHandler;
-import net.minecraft.scoreboard.*;
-import net.minecraft.util.*;
+import net.minecraft.client.network.NetHandlerPlayClient;
+import net.minecraft.scoreboard.ScorePlayerTeam;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
-import net.minecraftforge.event.ForgeSubscribe;
-import org.lwjgl.opengl.GL11;
 
 public class EventRenderGame extends Gui {
 
 	private String sheetLocation = RecMod.instance.sheetLocation;
 	private ResourceLocation indicators = new ResourceLocation(sheetLocation);
 	
-	@ForgeSubscribe
+	@SubscribeEvent
 	public void onRenderGameOverlay(RenderGameOverlayEvent event) {
 		if(!sheetLocation.equals(RecMod.instance.sheetLocation)){
 			sheetLocation = RecMod.instance.sheetLocation;
@@ -31,9 +30,10 @@ public class EventRenderGame extends Gui {
 			return;
 		}
 		Minecraft mc = Minecraft.getMinecraft();
-		if (mc.gameSettings.keyBindPlayerList.pressed && (!mc.isIntegratedServerRunning() || mc.thePlayer.sendQueue.playerInfoList.size() > 1)) {
-			NetClientHandler netclienthandler = mc.thePlayer.sendQueue;
-			List list = netclienthandler.playerInfoList;
+		if (mc.gameSettings.keyBindPlayerList.getIsKeyPressed() && (!mc.isIntegratedServerRunning() || mc.thePlayer.sendQueue.playerInfoList.size() > 1 || mc.theWorld.getScoreboard().func_96539_a(0) != null)) {
+            mc.mcProfiler.startSection("playerList");
+            NetHandlerPlayClient nethandlerplayclient = mc.thePlayer.sendQueue;
+            List list = nethandlerplayclient.playerInfoList;
 
 			int k = event.resolution.getScaledWidth();
 			int i2;
@@ -43,7 +43,7 @@ public class EventRenderGame extends Gui {
 			int i3;
 			int j3;
 			int k3;
-			j2 = netclienthandler.currentServerMaxPlayers;
+			j2 = nethandlerplayclient.currentServerMaxPlayers;
 			l2 = j2;
 
 			for (k2 = 1; l2 > 20; l2 = (j2 + k2 - 1) / k2) {
@@ -86,12 +86,12 @@ public class EventRenderGame extends Gui {
 					}
 				}
 			}
-		}else if(!mc.gameSettings.keyBindPlayerList.pressed && RecMod.instance.showSelf && mc.currentScreen == null){
+		}else if(!mc.gameSettings.keyBindPlayerList.getIsKeyPressed() && RecMod.instance.showSelf && mc.currentScreen == null){
 			int x = event.resolution.getScaledWidth() - 32;
 			int y = 0;
 			
-			int indicatorRecIndex = RecMod.instance.isPlayerRecording(mc.thePlayer.username) ? 1 : 0;
-			int indicatorStrIndex = RecMod.instance.isPlayerStreaming(mc.thePlayer.username) ? 2 : 0;
+			int indicatorRecIndex = RecMod.instance.isPlayerRecording(mc.thePlayer.getCommandSenderName()) ? 1 : 0;
+			int indicatorStrIndex = RecMod.instance.isPlayerStreaming(mc.thePlayer.getCommandSenderName()) ? 2 : 0;
 			
 			mc.getTextureManager().bindTexture(indicators);
 			drawTexturedModalRect(x, y, indicatorRecIndex * 16, (int)Math.floor(indicatorRecIndex / 16) * 16 + IndexReference.RESOLUTION_SPLIT_Y, 16, 16);
