@@ -49,7 +49,7 @@ public class CommandRec extends CommandBase {
 			boolean flag = astring[0].equals("r") ? !RecMod.instance.isPlayerRecording(sender) : !RecMod.instance.isPlayerStreaming(sender);
 			RecMod.instance.updatePlayerInformation(sender, type, flag);
 			spreadData(sender, type, flag);
-		} else if((astring.length == 2 || (astring.length == 3 && astring[2].equals("p"))) && astring[0].equals("ui") && (astring[1].equals("self") || astring[1].equals("sidebar")) && icommandsender instanceof Player){
+		} else if((astring.length == 2 || (astring.length == 3 && astring[2].equals("p"))) && astring[0].equals("ui") && (astring[1].equals("self") || astring[1].equals("sidebar")) && icommandsender instanceof EntityPlayer){
 			boolean isSelf = astring[1].equals("self");
 			boolean isOverride = astring.length == 3 && astring[2].equals("p");
 			sendUIUpdatePacket((EntityPlayer)icommandsender, isSelf, isOverride);
