@@ -79,14 +79,15 @@ public class KeyHandlerRecMod {
 		b = !b;
 	}
 
-	public static void registerSelf() {
+	public static KeyHandlerRecMod instantiateSelf() {
 		System.out.println("Key system register");
 		String keyCategory = "Recording Mod Bindings";
 		KeyBinding recBinding = new KeyBinding("Toggle Recording", 44, keyCategory);
 		KeyBinding streamBinding = new KeyBinding("Toggle Streaming", 45, keyCategory);
 		KeyHandlerRecMod keyh = new KeyHandlerRecMod(new KeyBinding[] { recBinding, streamBinding }, new boolean[] { false, false });
-		MinecraftForge.EVENT_BUS.register(keyh);
 		keyh.aggregateKeys();
+		
+		return keyh;
 	}
 
 	private void aggregateKeys() {

@@ -18,7 +18,7 @@ import net.minecraft.entity.player.*;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.MinecraftForge;
 
-@Mod(name = "Recording Status Mod", version = "v1.3.1", modid = "fuj1n.recmod")
+@Mod(name = "Recording Status Mod", version = "v1.3.2", modid = "fuj1n.recmod", acceptableRemoteVersions="*")
 public class RecMod {
 	
 	@Instance("fuj1n.recmod")
@@ -46,9 +46,10 @@ public class RecMod {
 		if (event.getSide() == Side.CLIENT) {
 			readFromFile();
 			MinecraftForge.EVENT_BUS.register(new EventRenderGame());
-			MinecraftForge.EVENT_BUS.register(new EventEntityJoinWorld());
+			MinecraftForge.EVENT_BUS.register(new EventClientEntityLogin());
 
-			KeyHandlerRecMod.registerSelf();
+			KeyHandlerRecMod keyh = KeyHandlerRecMod.instantiateSelf();
+			MinecraftForge.EVENT_BUS.register(keyh);
 		}
 	}
 
