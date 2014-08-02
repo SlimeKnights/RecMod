@@ -18,7 +18,7 @@ import net.minecraft.entity.player.*;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.MinecraftForge;
 
-@Mod(name = "Recording Status Mod", version = "v1.3.2", modid = "fuj1n.recmod", acceptableRemoteVersions="*")
+@Mod(name = "Recording Status Mod", version = "v1.3.2", modid = "fuj1n.recmod", acceptableRemoteVersions="*", canBeDeactivated=false)
 public class RecMod {
 	
 	@Instance("fuj1n.recmod")
