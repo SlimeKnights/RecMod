@@ -1,39 +1,37 @@
 package fuj1n.recmod.client.event;
 
-import java.util.List;
-
-import org.lwjgl.opengl.GL11;
-
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import fuj1n.recmod.RecMod;
 import fuj1n.recmod.lib.IndexReference;
+import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import org.lwjgl.opengl.GL11;
 
 public class EventRenderGame extends Gui {
 
 	private String sheetLocation = RecMod.instance.sheetLocation;
 	private ResourceLocation indicators = new ResourceLocation(sheetLocation);
-	
+
 	@SubscribeEvent
 	public void onRenderGameOverlay(RenderGameOverlayEvent event) {
-		if(!sheetLocation.equals(RecMod.instance.sheetLocation)){
+		if (!sheetLocation.equals(RecMod.instance.sheetLocation)) {
 			sheetLocation = RecMod.instance.sheetLocation;
 			indicators = new ResourceLocation(sheetLocation);
 		}
-		
+
 		if (event.type != RenderGameOverlayEvent.ElementType.ALL) {
 			return;
 		}
 		Minecraft mc = Minecraft.getMinecraft();
 		if (mc.gameSettings.keyBindPlayerList.getIsKeyPressed() && (!mc.isIntegratedServerRunning() || mc.thePlayer.sendQueue.playerInfoList.size() > 1 || mc.theWorld.getScoreboard().func_96539_a(0) != null)) {
-            mc.mcProfiler.startSection("playerList");
-            NetHandlerPlayClient nethandlerplayclient = mc.thePlayer.sendQueue;
-            List list = nethandlerplayclient.playerInfoList;
+			mc.mcProfiler.startSection("playerList");
+			NetHandlerPlayClient nethandlerplayclient = mc.thePlayer.sendQueue;
+			List list = nethandlerplayclient.playerInfoList;
 
 			int k = event.resolution.getScaledWidth();
 			int i2;
@@ -80,22 +78,22 @@ public class EventRenderGame extends Gui {
 						mc.getTextureManager().bindTexture(indicators);
 						int indicatorRecIndex = RecMod.instance.isPlayerRecording(guiplayerinfo.name) ? IndexReference.ICON_RED_INDEX : IndexReference.ICON_GRAY_INDEX;
 						int indicatorStrIndex = RecMod.instance.isPlayerStreaming(guiplayerinfo.name) ? IndexReference.ICON_GREEN_INDEX : IndexReference.ICON_GRAY_INDEX;
-						
-						drawTexturedModalRect(i6 - 8 - infooffset, j3, indicatorRecIndex < 32 ? indicatorRecIndex * 8 : indicatorRecIndex * 8 /*Better equation here*/, (int)Math.floor(indicatorRecIndex / 32) * 8, 8, 8);
-						drawTexturedModalRect(i6 - 8 - (infooffset - 8), j3, indicatorStrIndex * 8, (int)Math.floor(indicatorStrIndex / 32) * 8, 8, 8);
+
+						drawTexturedModalRect(i6 - 8 - infooffset, j3, indicatorRecIndex < 32 ? indicatorRecIndex * 8 : indicatorRecIndex * 8 /*Better equation here*/, (int) Math.floor(indicatorRecIndex / 32) * 8, 8, 8);
+						drawTexturedModalRect(i6 - 8 - (infooffset - 8), j3, indicatorStrIndex * 8, (int) Math.floor(indicatorStrIndex / 32) * 8, 8, 8);
 					}
 				}
 			}
-		}else if(!mc.gameSettings.keyBindPlayerList.getIsKeyPressed() && RecMod.instance.showSelf && mc.currentScreen == null){
+		} else if (!mc.gameSettings.keyBindPlayerList.getIsKeyPressed() && RecMod.instance.showSelf && mc.currentScreen == null) {
 			int x = event.resolution.getScaledWidth() - 32;
 			int y = 0;
-			
+
 			int indicatorRecIndex = RecMod.instance.isPlayerRecording(mc.thePlayer.getCommandSenderName()) ? 1 : 0;
 			int indicatorStrIndex = RecMod.instance.isPlayerStreaming(mc.thePlayer.getCommandSenderName()) ? 2 : 0;
-			
+
 			mc.getTextureManager().bindTexture(indicators);
-			drawTexturedModalRect(x, y, indicatorRecIndex * 16, (int)Math.floor(indicatorRecIndex / 16) * 16 + IndexReference.RESOLUTION_SPLIT_Y, 16, 16);
-			drawTexturedModalRect(x + 16, y, indicatorStrIndex * 16, (int)Math.floor(indicatorStrIndex / 16) * 16 + IndexReference.RESOLUTION_SPLIT_Y, 16, 16);
+			drawTexturedModalRect(x, y, indicatorRecIndex * 16, (int) Math.floor(indicatorRecIndex / 16) * 16 + IndexReference.RESOLUTION_SPLIT_Y, 16, 16);
+			drawTexturedModalRect(x + 16, y, indicatorStrIndex * 16, (int) Math.floor(indicatorStrIndex / 16) * 16 + IndexReference.RESOLUTION_SPLIT_Y, 16, 16);
 		}
 	}
 

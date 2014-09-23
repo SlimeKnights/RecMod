@@ -1,10 +1,7 @@
 package fuj1n.recmod.network.packet;
 
-import java.io.IOException;
-
-import fuj1n.recmod.RecMod;
-
 import cpw.mods.fml.common.network.ByteBufUtils;
+import fuj1n.recmod.RecMod;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.entity.player.EntityPlayer;
@@ -21,7 +18,8 @@ public class PacketUpdatePlayerStatus extends AbstractPacket {
 		this.flag = flag;
 	}
 
-	public PacketUpdatePlayerStatus() {}
+	public PacketUpdatePlayerStatus() {
+	}
 
 	@Override
 	public void encodeInto(ChannelHandlerContext ctx, ByteBuf buffer) {
@@ -43,6 +41,11 @@ public class PacketUpdatePlayerStatus extends AbstractPacket {
 	}
 
 	@Override
-	public void handleServerSide(EntityPlayer player) {}
+	public void handleServerSide(EntityPlayer player) {
+		RecMod.instance.updatePlayerInformation(this.player, type, flag);
+
+		// Send the packet to all the players
+		RecMod.packetPipeline.sendToAll(this);
+	}
 
 }

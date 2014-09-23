@@ -1,11 +1,7 @@
 package fuj1n.recmod.network.packet;
 
-import java.io.IOException;
-
-import fuj1n.recmod.RecMod;
-
 import cpw.mods.fml.common.network.ByteBufUtils;
-
+import fuj1n.recmod.RecMod;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.entity.player.EntityPlayer;
@@ -13,13 +9,14 @@ import net.minecraft.entity.player.EntityPlayer;
 public class PacketRemovePlayer extends AbstractPacket {
 
 	private String player;
-	
-	public PacketRemovePlayer(String player){
+
+	public PacketRemovePlayer(String player) {
 		this.player = player;
 	}
-	
-	public PacketRemovePlayer(){}
-	
+
+	public PacketRemovePlayer() {
+	}
+
 	@Override
 	public void encodeInto(ChannelHandlerContext ctx, ByteBuf buffer) {
 		ByteBufUtils.writeUTF8String(buffer, player);
@@ -36,6 +33,7 @@ public class PacketRemovePlayer extends AbstractPacket {
 	}
 
 	@Override
-	public void handleServerSide(EntityPlayer player) {}
+	public void handleServerSide(EntityPlayer player) {
+	}
 
 }

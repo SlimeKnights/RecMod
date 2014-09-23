@@ -2,7 +2,6 @@ package fuj1n.recmod.network.packet;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
-
 import net.minecraft.entity.player.EntityPlayer;
 
 /**
