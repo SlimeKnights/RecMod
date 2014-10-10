@@ -1,0 +1,35 @@
+recmod.interface.name=RecMod - 
+
+recmod.gui.back=<
+recmod.gui.close=X
+
+recmod.gui.enabledcode=a
+recmod.gui.disabledcode=c
+recmod.gui.highlightcode=e
+
+recmod.gui.enabled=Yes
+recmod.gui.disabled=No
+recmod.gui.disabled2=DISABLED
+
+recmod.gui.pane.title.main=Main
+recmod.gui.pane.title.general=General
+recmod.gui.pane.title.interface=Interface
+recmod.gui.pane.title.keyboard=Keyboard
+recmod.gui.pane.title.integration=Integration - NYI
+recmod.gui.pane.title.testing=Testing
+
+recmod.gui.pane.main.recording=Recording
+recmod.gui.pane.main.streaming=Streaming
+
+recmod.gui.pane.nyitext1=This feature is still not
+recmod.gui.pane.nyitext2=implemented, trust me, it'll be
+recmod.gui.pane.nyitext3=awesome!
+
+recmod.gui.pane.general.kstate=Keep State: $s
+
+recmod.gui.pane.interface.bobber=Bobber: $s
+recmod.gui.pane.interface.never=Never: $s
+
+recmod.gui.pane.keyboard.enable=Keyboard Enabled: $s
+recmod.gui.pane.keyboard.record=Record Key: $s
+recmod.gui.pane.keyboard.stream=Stream Key: $s

@@ -9,8 +9,10 @@ public class EventClientEntityLogin {
 
 	@SubscribeEvent
 	public void onEntityLogin(PlayerLoggedInEvent event) {
-		Minecraft mc = Minecraft.getMinecraft().getMinecraft();
+		Minecraft mc = Minecraft.getMinecraft();
 		RecMod.instance.showSelf = !mc.isSingleplayer() && !RecMod.instance.showSelfDef;
+
+		RecMod.instance.mapsDirty = true;
 	}
 
 }

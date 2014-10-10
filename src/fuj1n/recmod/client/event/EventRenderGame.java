@@ -14,20 +14,17 @@ import org.lwjgl.opengl.GL11;
 
 public class EventRenderGame extends Gui {
 
-	private String sheetLocation = RecMod.instance.sheetLocation;
-	private ResourceLocation indicators = new ResourceLocation(sheetLocation);
+	private ResourceLocation indicatorsHigh = new ResourceLocation("recmod:textures/sheets/indicatorsx2.png");
+	private ResourceLocation indicatorsLow = new ResourceLocation("recmod:textures/sheets/indicators.png");
 
 	@SubscribeEvent
 	public void onRenderGameOverlay(RenderGameOverlayEvent event) {
-		if (!sheetLocation.equals(RecMod.instance.sheetLocation)) {
-			sheetLocation = RecMod.instance.sheetLocation;
-			indicators = new ResourceLocation(sheetLocation);
-		}
-
 		if (event.type != RenderGameOverlayEvent.ElementType.ALL) {
 			return;
 		}
 		Minecraft mc = Minecraft.getMinecraft();
+		ResourceLocation indicators = mc.isFancyGraphicsEnabled() ? indicatorsHigh : indicatorsLow;
+
 		if (mc.gameSettings.keyBindPlayerList.getIsKeyPressed() && (!mc.isIntegratedServerRunning() || mc.thePlayer.sendQueue.playerInfoList.size() > 1 || mc.theWorld.getScoreboard().func_96539_a(0) != null)) {
 			mc.mcProfiler.startSection("playerList");
 			NetHandlerPlayClient nethandlerplayclient = mc.thePlayer.sendQueue;

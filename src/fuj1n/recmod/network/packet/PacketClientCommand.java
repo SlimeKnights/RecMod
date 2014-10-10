@@ -41,18 +41,19 @@ public class PacketClientCommand extends AbstractPacket {
 
 	@Override
 	public void handleClientSide(EntityPlayer player) {
-		if(params == null || params.length == 0){
+		if (params == null || params.length == 0) {
 			player.openGui(RecMod.instance, 0, player.worldObj, 0, 0, 0);
-		} else if (params[0].equals("bobber")) {
+		} else if (params.length == 1 && (params[0].equals("r") || params[0].equals("s"))) {
+			RecMod.instance.updatePlayerInformation(player.getCommandSenderName(), params[0].equals("r") ? 0 : 1, params[0].equals("r") ? !RecMod.instance.isPlayerRecording(player.getCommandSenderName()) : !RecMod.instance.isPlayerStreaming(player.getCommandSenderName()));
+
+			RecMod.packetPipeline.sendToServer(new PacketUpdatePlayerStatus(player.getCommandSenderName(), params[0].equals("r") ? 0 : 1, params[0].equals("r") ? RecMod.instance.isPlayerRecording(player.getCommandSenderName()) : RecMod.instance.isPlayerStreaming(player.getCommandSenderName())));
+		} else if (params.length == 1 && params[0].equals("bobber")) {
 			boolean isOverride = params.length == 2 && params[1].equals("p");
 
-				RecMod.instance.showSelf = !RecMod.instance.showSelf;
-				RecMod.instance.showSelfDef = isOverride ? !RecMod.instance.showSelfDef : RecMod.instance.showSelfDef;
+			RecMod.instance.showSelf = !RecMod.instance.showSelf;
+			RecMod.instance.showSelfDef = isOverride ? !RecMod.instance.showSelfDef : RecMod.instance.showSelfDef;
 
-				RecMod.instance.onUIStateChanged();
-		} else if (params[0].equals("sheet")) {
-			RecMod.instance.sheetLocation = params[1];
-			RecMod.instance.onSheetChanged();
+			RecMod.instance.onUIStateChanged();
 		}
 	}
 

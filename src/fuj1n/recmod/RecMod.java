@@ -7,16 +7,17 @@ import cpw.mods.fml.common.event.*;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.relauncher.Side;
 import fuj1n.recmod.client.event.*;
-import fuj1n.recmod.client.keybind.KeyHandlerRecMod;
 import fuj1n.recmod.command.CommandRec;
+import fuj1n.recmod.legacy.OldConfigConverter;
 import fuj1n.recmod.network.*;
 import fuj1n.recmod.network.packet.*;
-import java.io.*;
+import java.io.File;
 import java.util.HashMap;
 import net.minecraft.command.ServerCommandManager;
 import net.minecraft.entity.player.*;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.config.Configuration;
 
 @Mod(name = "Recording Status Mod", version = "v1.4", modid = "fuj1n.recmod", acceptableRemoteVersions = "*", canBeDeactivated = false)
 public class RecMod {
@@ -30,31 +31,47 @@ public class RecMod {
 	private static HashMap<String, Boolean> streamers = new HashMap<String, Boolean>();
 
 	public boolean showSelf = true;
+	public boolean keepState = false;
+	public boolean recState = false, strState = false;
 
-	//Keyboard stuffs
+	// Keyboard stuffs
 	public boolean enableKeys = false;
 	public int keyRec = 44;
 	public int keyStr = 45;
 
-	public String sheetLocation = "recmod:textures/sheets/indicators.png";
-
 	public boolean showSelfDef = false;
 
 	public File configFile;
+	public Configuration config;
+
+	public boolean mapsDirty = false;
 
 	@EventHandler
 	public void preinit(FMLPreInitializationEvent event) {
-		MinecraftForge.EVENT_BUS.register(new PlayerTracker());
+		FMLCommonHandler.instance().bus().register(new PlayerTracker());
 
 		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
 
-		configFile = new File(event.getModConfigurationDirectory(), "recmod.ui");
+		OldConfigConverter.configFile = new File(event.getModConfigurationDirectory(), "recmod.ui");
 
 		if (event.getSide() == Side.CLIENT) {
+			configFile = event.getSuggestedConfigurationFile();
+
+			if (OldConfigConverter.configFile.exists() && !configFile.exists()) {
+				OldConfigConverter.convert();
+				OldConfigConverter.configFile.delete();
+			} else {
+				if (OldConfigConverter.configFile.exists()) {
+					OldConfigConverter.configFile.delete();
+				}
+
+				instanciateConfig();
+			}
+
 			readFromFile();
 			MinecraftForge.EVENT_BUS.register(new EventRenderGame());
 			FMLCommonHandler.instance().bus().register(new EventClientEntityLogin());
-			FMLCommonHandler.instance().bus().register(new KeyHandlerRecMod());
+			FMLCommonHandler.instance().bus().register(new EventClientTick());
 		}
 	}
 
@@ -63,10 +80,11 @@ public class RecMod {
 		packetPipeline.initialise();
 
 		PacketPipeline pp = packetPipeline;
-		//Packet Registration
+		// Packet Registration
 		pp.registerPacket(PacketUpdatePlayerStatus.class);
 		pp.registerPacket(PacketRemovePlayer.class);
 		pp.registerPacket(PacketClientCommand.class);
+		pp.registerPacket(PacketEndOfInitialTransmission.class);
 	}
 
 	@EventHandler
@@ -80,8 +98,7 @@ public class RecMod {
 			return;
 		}
 
-		recorders = new HashMap<String, Boolean>();
-		streamers = new HashMap<String, Boolean>();
+		clearMaps();
 
 		ServerCommandManager handler = (ServerCommandManager) MinecraftServer.getServer().getCommandManager();
 		handler.registerCommand(new CommandRec());
@@ -117,79 +134,39 @@ public class RecMod {
 		writeToFile();
 	}
 
-	public void onSheetChanged() {
-		writeToFile();
+	public void instanciateConfig() {
+		config = new Configuration(configFile, true);
 	}
 
 	public void readFromFile() {
-		if (!configFile.exists()) {
-			writeToFile();
-			
-			return;
+		config.load();
+
+		showSelfDef = config.getBoolean("Show bobber", "Interface", showSelfDef, "Whether the bobber will be made visible if the mod determines that you are playing multiplayer.");
+		enableKeys = config.getBoolean("Enable keyboard", "Keyboard", enableKeys, "Whether the keyboard shortcuts are enabled.");
+		keyRec = config.getInt("Record Key", "Keyboard", keyRec, -1338, 250, "The key that will toggle recording.");
+		keyStr = config.getInt("Stream Key", "Keyboard", keyStr, -1338, 250, "The key that will toggle streaming.");
+		keepState = config.getBoolean("Keep state", "General", keepState, "Whether the recording state is kept throughout the gaming session.");
+
+		if (config.hasChanged()) {
+			config.save();
 		}
-
-		try {
-			BufferedReader b = new BufferedReader(new FileReader(configFile));
-			String line1 = b.readLine();
-			String line2 = b.readLine();
-			String line3 = b.readLine();
-			String line4 = b.readLine();
-			String line5 = b.readLine();
-
-			showSelfDef = convertToBoolean(line1, true);
-			sheetLocation = line2 != null && !line2.equals("") ? line2 : sheetLocation;
-			enableKeys = convertToBoolean(line3, false);
-			keyRec = convertToInteger(line4, 44);
-			keyStr = convertToInteger(line5, 45);
-
-			b.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			//Don't want the massive stacktrace if the file read fails.
-			//e.printStackTrace();
-		}
-	}
-
-	public int convertToInteger(String s, int def) {
-		try {
-			return Integer.parseInt(s);
-		} catch (Exception e) {
-		}
-		return def;
-	}
-
-	public boolean convertToBoolean(String s, boolean def) {
-		try {
-			return Boolean.parseBoolean(s);
-		} catch (Exception e) {
-		}
-		return def;
 	}
 
 	public void writeToFile() {
+		// Delete the config to force update
 		configFile.delete();
-		try {
-			configFile.createNewFile();
-			BufferedWriter b = new BufferedWriter(new FileWriter(configFile));
-			b.write(Boolean.toString(showSelfDef));
-			b.newLine();
-			b.write(sheetLocation);
-			b.newLine();
-			b.write(Boolean.toString(enableKeys));
-			b.newLine();
-			b.write(Integer.toString(keyRec));
-			b.newLine();
-			b.write(Integer.toString(keyStr));
-			b.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+
+		readFromFile();
 	}
 
 	public void removeUnneededData(String username) {
 		recorders.remove(username);
 		streamers.remove(username);
+	}
+
+	public void clearMaps() {
+		recorders.clear();
+		streamers.clear();
 	}
 
 	public void sendDataToPlayer(EntityPlayer player) {
@@ -200,11 +177,16 @@ public class RecMod {
 		for (int i = 0; i < streamers.size(); i++) {
 			sendPacket(player, streamers.keySet().toArray()[i].toString(), 1, Boolean.parseBoolean(streamers.values().toArray()[i].toString()));
 		}
+
+		if (player instanceof EntityPlayerMP) {
+			PacketEndOfInitialTransmission pckt = new PacketEndOfInitialTransmission();
+			packetPipeline.sendTo(pckt, (EntityPlayerMP) player);
+		}
 	}
 
 	public void sendPacket(EntityPlayer target, String player, int type, boolean flag) {
-		PacketUpdatePlayerStatus pckt = new PacketUpdatePlayerStatus(player, type, flag);
 		if (target instanceof EntityPlayerMP) {
+			PacketUpdatePlayerStatus pckt = new PacketUpdatePlayerStatus(player, type, flag);
 			packetPipeline.sendTo(pckt, (EntityPlayerMP) target);
 		} else {
 		}

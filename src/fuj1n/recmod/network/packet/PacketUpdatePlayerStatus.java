@@ -37,7 +37,9 @@ public class PacketUpdatePlayerStatus extends AbstractPacket {
 
 	@Override
 	public void handleClientSide(EntityPlayer player) {
-		RecMod.instance.updatePlayerInformation(this.player, type, flag);
+		if (!player.getCommandSenderName().equals(this.player)) {
+			RecMod.instance.updatePlayerInformation(this.player, type, flag);
+		}
 	}
 
 	@Override

@@ -1,26 +1,20 @@
 package fuj1n.recmod.client.gui;
 
-import net.minecraft.client.gui.GuiLabel;
-
-import org.lwjgl.input.Keyboard;
-
-import net.minecraft.client.gui.GuiScreen;
-
 import fuj1n.recmod.RecMod;
 import fuj1n.recmod.inventory.ContainerDummy;
 import fuj1n.recmod.network.packet.PacketUpdatePlayerStatus;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.util.*;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
 public class GuiSimple extends GuiContainer {
-
 	public String boundPlayer;
 
 	public int guiState = 0;
-	public String[] stateNames = { "Main", "Interface", "Keyboard", "Integration - NYI" };
-	public int[] returnStates = { -1337, 0, 0, 0 };
+	public String[] stateNames = { translate("recmod.gui.pane.title.main"), translate("recmod.gui.pane.title.general"), translate("recmod.gui.pane.title.interface"), translate("recmod.gui.pane.title.keyboard"), translate("recmod.gui.pane.title.integration"), translate("recmod.gui.pane.title.testing") };
+	public int[] returnStates = { -1337, 0, 0, 0, 0, 0 };
 
 	// Keyboard pane globals
 	public int listenKeyType = -1;
@@ -39,12 +33,12 @@ public class GuiSimple extends GuiContainer {
 
 	@Override
 	public void drawGuiContainerForegroundLayer(int par1, int par2) {
-		this.fontRendererObj.drawString("RecMod - " + stateNames[guiState], 8, 11, 4210752);
+		this.fontRendererObj.drawString(translate("recmod.interface.name") + stateNames[guiState], 8, 11, 4210752);
 
-		if (guiState == 3) {
-			this.fontRendererObj.drawString("This feature is still not", 8, 11 + fontRendererObj.FONT_HEIGHT * 2, 4210752);
-			this.fontRendererObj.drawString("implemented, trust me, it'll be", 8, 11 + fontRendererObj.FONT_HEIGHT * 3, 4210752);
-			this.fontRendererObj.drawString("awesome!", 8, 11 + fontRendererObj.FONT_HEIGHT * 4, 4210752);
+		if (guiState == 4) {
+			this.fontRendererObj.drawString(translate("recmod.gui.pane.nyitext1"), 8, 11 + fontRendererObj.FONT_HEIGHT * 2, 4210752);
+			this.fontRendererObj.drawString(translate("recmod.gui.pane.nyitext2"), 8, 11 + fontRendererObj.FONT_HEIGHT * 3, 4210752);
+			this.fontRendererObj.drawString(translate("recmod.gui.pane.nyitext3"), 8, 11 + fontRendererObj.FONT_HEIGHT * 4, 4210752);
 		}
 	}
 
@@ -70,7 +64,7 @@ public class GuiSimple extends GuiContainer {
 		int k = (this.width - this.xSize) / 2;
 		int l = (this.height - this.ySize) / 2;
 
-		buttonList.add(new GuiButton(returnStates[guiState] == -1337 ? -1337 : 1337 + returnStates[guiState], k + this.xSize - 25, l + 5, 20, 20, returnStates[guiState] == -1337 ? "X" : "<"));
+		buttonList.add(new GuiButton(returnStates[guiState] == -1337 ? -1337 : 1337 + returnStates[guiState], k + this.xSize - 25, l + 5, 20, 20, returnStates[guiState] == -1337 ? translate("recmod.gui.close") : translate("recmod.gui.back")));
 
 		int buttonDelim = 21;
 		int buttonSize = this.xSize - 16;
@@ -78,23 +72,27 @@ public class GuiSimple extends GuiContainer {
 
 		switch (guiState) {
 		case 0:
-			buttonList.add(new GuiButton(0, k + 8 + smallButtonSize * 0, l + 30 + buttonDelim * 0, smallButtonSize, 20, (RecMod.instance.isPlayerRecording(boundPlayer) ? EnumChatFormatting.GREEN : EnumChatFormatting.RED) + "Recording"));
-			buttonList.add(new GuiButton(1, k + 8 + smallButtonSize * 1, l + 30 + buttonDelim * 0, smallButtonSize, 20, (RecMod.instance.isPlayerStreaming(boundPlayer) ? EnumChatFormatting.GREEN : EnumChatFormatting.RED) + "Streaming"));
-			buttonList.add(new GuiButton(1338, k + 8, l + 30 + buttonDelim * 1, buttonSize, 20, "Interface"));
-			buttonList.add(new GuiButton(1339, k + 8, l + 30 + buttonDelim * 2, buttonSize, 20, "Keyboard"));
-			buttonList.add(new GuiButton(1340, k + 8, l + 30 + buttonDelim * 3, buttonSize, 20, "Integration"));
-
+			buttonList.add(new GuiButton(0, k + 8 + smallButtonSize * 0, l + 30 + buttonDelim * 0, smallButtonSize, 20, '\u00A7' + (RecMod.instance.isPlayerRecording(boundPlayer) ? translate("recmod.gui.enabledcode") : translate("recmod.gui.disabledcode")) + translate("recmod.gui.pane.main.recording")));
+			buttonList.add(new GuiButton(1, k + 8 + smallButtonSize * 1, l + 30 + buttonDelim * 0, smallButtonSize, 20, '\u00A7' + (RecMod.instance.isPlayerStreaming(boundPlayer) ? translate("recmod.gui.enabledcode") : translate("recmod.gui.disabledcode")) + translate("recmod.gui.pane.main.streaming")));
+			buttonList.add(new GuiButton(1338, k + 8, l + 30 + buttonDelim * 1, buttonSize, 20, stateNames[1]));
+			buttonList.add(new GuiButton(1339, k + 8, l + 30 + buttonDelim * 2, buttonSize, 20, stateNames[2]));
+			buttonList.add(new GuiButton(1340, k + 8, l + 30 + buttonDelim * 3, buttonSize, 20, stateNames[3]));
+			buttonList.add(new GuiButton(1341, k + 8, l + 30 + buttonDelim * 4, buttonSize, 20, stateNames[4]));
+			buttonList.add(new GuiButton(-1111, k + 8, l + 30 + buttonDelim * 5, buttonSize, 20, stateNames[5]));
 			break;
 		case 1:
-			buttonList.add(new GuiButton(3, k + 8 + smallButtonSize * 0, l + 30 + buttonDelim * 0, smallButtonSize, 20, "Bobber: " + (RecMod.instance.showSelf ? EnumChatFormatting.GREEN + "On" : EnumChatFormatting.RED + "Off")));
-			buttonList.add(new GuiButton(4, k + 8 + smallButtonSize * 1, l + 30 + buttonDelim * 0, smallButtonSize, 20, "Never: " + (!RecMod.instance.showSelfDef ? EnumChatFormatting.GREEN + "On" : EnumChatFormatting.RED + "Off")));
+			buttonList.add(new GuiButton(5, k + 8, l + 30 + buttonDelim * 0, buttonSize, 20, translate("recmod.gui.pane.general.kstate").replace("$s", '\u00A7' + (RecMod.instance.keepState ? translate("recmod.gui.enabledcode") + translate("recmod.gui.enabled") : translate("recmod.gui.disabledcode") + translate("recmod.gui.disabled")))));
 			break;
 		case 2:
-			buttonList.add(new GuiButton(2, k + 8, l + 30 + buttonDelim * 0, buttonSize, 20, "Keyboard Enabled: " + (RecMod.instance.enableKeys ? EnumChatFormatting.GREEN + "Yes" : EnumChatFormatting.RED + "No")));
+			buttonList.add(new GuiButton(3, k + 8 + smallButtonSize * 0, l + 30 + buttonDelim * 0, smallButtonSize, 20, translate("recmod.gui.pane.interface.bobber").replace("$s", '\u00A7' + (RecMod.instance.showSelf ? translate("recmod.gui.enabledcode") + translate("recmod.gui.enabled") : translate("recmod.gui.disabledcode") + translate("recmod.gui.disabled")))));
+			buttonList.add(new GuiButton(4, k + 8 + smallButtonSize * 1, l + 30 + buttonDelim * 0, smallButtonSize, 20, translate("recmod.gui.pane.interface.never").replace("$s", '\u00A7' + (!RecMod.instance.showSelfDef ? translate("recmod.gui.enabledcode") + translate("recmod.gui.enabled") : translate("recmod.gui.disabledcode") + translate("recmod.gui.disabled")))));
+			break;
+		case 3:
+			buttonList.add(new GuiButton(2, k + 8, l + 30 + buttonDelim * 0, buttonSize, 20, translate("recmod.gui.pane.keyboard.enable").replace("$s", '\u00A7' + (RecMod.instance.enableKeys ? translate("recmod.gui.enabledcode") + translate("recmod.gui.enabled") : translate("recmod.gui.disabledcode") + translate("recmod.gui.disabled")))));
 
 			if (RecMod.instance.enableKeys) {
-				buttonList.add(new GuiButton(1594, k + 9, l + 30 + buttonDelim * 2, buttonSize, 20, (listenKeyType == 0 ? EnumChatFormatting.YELLOW : "") + "Record Key: " + (RecMod.instance.keyRec == -1337 ? "DISABLED" : Keyboard.getKeyName(RecMod.instance.keyRec))));
-				buttonList.add(new GuiButton(1595, k + 9, l + 30 + buttonDelim * 3, buttonSize, 20, (listenKeyType == 1 ? EnumChatFormatting.YELLOW : "") + "Stream Key: " + (RecMod.instance.keyStr == -1337 ? "DISABLED" : Keyboard.getKeyName(RecMod.instance.keyStr))));
+				buttonList.add(new GuiButton(1594, k + 9, l + 30 + buttonDelim * 2, buttonSize, 20, (listenKeyType == 0 ? '\u00A7' + translate("recmod.gui.highlightcode") : "") + translate("recmod.gui.pane.keyboard.record").replace("$s", RecMod.instance.keyRec == -1337 ? translate("recmod.gui.disabled2") : Keyboard.getKeyName(RecMod.instance.keyRec))));
+				buttonList.add(new GuiButton(1595, k + 9, l + 30 + buttonDelim * 3, buttonSize, 20, (listenKeyType == 1 ? '\u00A7' + translate("recmod.gui.highlightcode") : "") + translate("recmod.gui.pane.keyboard.stream").replace("$s", RecMod.instance.keyStr == -1337 ? translate("recmod.gui.disabled2") : Keyboard.getKeyName(RecMod.instance.keyStr))));
 			}
 
 			break;
@@ -139,6 +137,11 @@ public class GuiSimple extends GuiContainer {
 				RecMod.instance.writeToFile();
 
 				break;
+			case 5:
+				RecMod.instance.keepState = !RecMod.instance.keepState;
+				RecMod.instance.writeToFile();
+
+				break;
 			}
 		}
 
@@ -170,4 +173,7 @@ public class GuiSimple extends GuiContainer {
 		}
 	}
 
+	private String translate(String s) {
+		return StatCollector.translateToLocal(s);
+	}
 }
