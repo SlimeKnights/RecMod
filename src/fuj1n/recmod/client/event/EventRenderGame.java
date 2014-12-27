@@ -1,5 +1,7 @@
 package fuj1n.recmod.client.event;
 
+import net.minecraft.client.renderer.Tessellator;
+
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import fuj1n.recmod.RecMod;
 import fuj1n.recmod.lib.IndexReference;
@@ -25,6 +27,9 @@ public class EventRenderGame extends Gui {
 		Minecraft mc = Minecraft.getMinecraft();
 		ResourceLocation indicators = mc.isFancyGraphicsEnabled() ? indicatorsHigh : indicatorsLow;
 
+		Tessellator tes = Tessellator.instance;
+		tes.setColorOpaque_F(1F, 1F, 1F);
+		
 		if (mc.gameSettings.keyBindPlayerList.getIsKeyPressed() && (!mc.isIntegratedServerRunning() || mc.thePlayer.sendQueue.playerInfoList.size() > 1 || mc.theWorld.getScoreboard().func_96539_a(0) != null)) {
 			mc.mcProfiler.startSection("playerList");
 			NetHandlerPlayClient nethandlerplayclient = mc.thePlayer.sendQueue;

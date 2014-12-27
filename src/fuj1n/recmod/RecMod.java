@@ -19,7 +19,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 
-@Mod(name = "Recording Status Mod", version = "v1.4", modid = "fuj1n.recmod", acceptableRemoteVersions = "*", canBeDeactivated = false)
+@Mod(name = "Recording Status Mod", version = "v1.4.2.1", modid = "fuj1n.recmod", acceptableRemoteVersions = "*", canBeDeactivated = false)
 public class RecMod {
 
 	@Instance("fuj1n.recmod")
