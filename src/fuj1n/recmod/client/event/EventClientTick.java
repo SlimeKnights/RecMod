@@ -31,6 +31,11 @@ public class EventClientTick {
 			RecMod.instance.mapsDirty = false;
 		}
 
+        if(event.type == Type.CLIENT && event.phase == Phase.START && mc.theWorld != null && mc.thePlayer != null && RecMod.instance.showMode == 3){
+            String player = mc.thePlayer.getCommandSenderName();
+            RecMod.instance.showSelf = RecMod.instance.isPlayerRecording(player) || RecMod.instance.isPlayerStreaming(player);
+        }
+		
 		if (!RecMod.instance.enableKeys) {
 			return;
 		}

@@ -29,7 +29,6 @@ public class OldConfigConverter {
 			String line5 = b.readLine();
 			String line6 = b.readLine();
 
-			rm.showSelfDef = convertToBoolean(line1, true);
 			//Discarded line
 			//			rm.sheetLocation = line2 != null && !line2.equals("") ? line2 : rm.sheetLocation;
 			rm.enableKeys = convertToBoolean(line3, false);

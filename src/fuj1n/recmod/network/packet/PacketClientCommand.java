@@ -47,13 +47,6 @@ public class PacketClientCommand extends AbstractPacket {
 			RecMod.instance.updatePlayerInformation(player.getCommandSenderName(), params[0].equals("r") ? 0 : 1, params[0].equals("r") ? !RecMod.instance.isPlayerRecording(player.getCommandSenderName()) : !RecMod.instance.isPlayerStreaming(player.getCommandSenderName()));
 
 			RecMod.packetPipeline.sendToServer(new PacketUpdatePlayerStatus(player.getCommandSenderName(), params[0].equals("r") ? 0 : 1, params[0].equals("r") ? RecMod.instance.isPlayerRecording(player.getCommandSenderName()) : RecMod.instance.isPlayerStreaming(player.getCommandSenderName())));
-		} else if (params.length == 1 && params[0].equals("bobber")) {
-			boolean isOverride = params.length == 2 && params[1].equals("p");
-
-			RecMod.instance.showSelf = !RecMod.instance.showSelf;
-			RecMod.instance.showSelfDef = isOverride ? !RecMod.instance.showSelfDef : RecMod.instance.showSelfDef;
-
-			RecMod.instance.onUIStateChanged();
 		}
 	}
 

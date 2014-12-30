@@ -24,7 +24,6 @@ public class CommandRec extends CommandBase {
 		icommandsender.addChatMessage(new ChatComponentText("\u00A7cRec Usage: "));
 		icommandsender.addChatMessage(new ChatComponentText("\u00A7c{no oprands} (displays an easy to use GUI)"));
 		icommandsender.addChatMessage(new ChatComponentText("\u00A7c<r/s> (toggle recording or streaming)"));
-		icommandsender.addChatMessage(new ChatComponentText("\u00A7c<bobber> [p] (toggle the bobber - p toggles never display)"));
 		return "End Rec Usage";
 	}
 
@@ -44,7 +43,6 @@ public class CommandRec extends CommandBase {
 
 		if (astring.length == 0) {
 		} else if (astring.length == 1 && (astring[0].equals("r") || astring[0].equals("s"))) {
-		} else if ((astring.length == 1 || (astring.length == 2 && astring[1].equals("p"))) && astring[0].equals("bobber")) {
 		} else {
 			onWrongUsage(icommandsender);
 			return;
@@ -64,11 +62,6 @@ public class CommandRec extends CommandBase {
 		if (par2ArrayOfStr.length == 1) {
 			l.add("r");
 			l.add("s");
-			l.add("bobber");
-			l.add("sheet");
-		} else if (par2ArrayOfStr.length == 2 && par2ArrayOfStr[0].equals("bobber")) {
-		} else if (par2ArrayOfStr.length == 3 && par2ArrayOfStr[1].equals("self")) {
-			l.add("p");
 		}
 
 		return l;

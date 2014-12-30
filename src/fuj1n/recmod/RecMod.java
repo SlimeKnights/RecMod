@@ -19,7 +19,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 
-@Mod(name = "Recording Status Mod", version = "v1.4.2.1", modid = "fuj1n.recmod", acceptableRemoteVersions = "*", canBeDeactivated = false)
+@Mod(name = "Recording Status Mod", version = "v1.5", modid = "fuj1n.recmod", acceptableRemoteVersions = "*", canBeDeactivated = false)
 public class RecMod {
 
 	@Instance("fuj1n.recmod")
@@ -39,7 +39,10 @@ public class RecMod {
 	public int keyRec = 44;
 	public int keyStr = 45;
 
-	public boolean showSelfDef = false;
+	// Bobber controls
+	public int showMode = 3;
+	public int posMode = 1;
+	public int absX = 0, absY = 0;
 
 	public File configFile;
 	public Configuration config;
@@ -130,10 +133,6 @@ public class RecMod {
 		return streamers.get(username) != null ? streamers.get(username) : false;
 	}
 
-	public void onUIStateChanged() {
-		writeToFile();
-	}
-
 	public void instanciateConfig() {
 		config = new Configuration(configFile, true);
 	}
@@ -141,7 +140,10 @@ public class RecMod {
 	public void readFromFile() {
 		config.load();
 
-		showSelfDef = config.getBoolean("Show bobber", "Interface", showSelfDef, "Whether the bobber will be made visible if the mod determines that you are playing multiplayer.");
+		showMode = config.getInt("Bobber AutoShow Mode", "Interface", showMode, 0, 3, "The automatic behaviour of the ingame bobber visibility.");
+		posMode = config.getInt("Bobber Position Mode", "Interface", posMode, 0, 5, "The positioning mode of the bobber.");
+		absX = config.getInt("Bobber Position Absolute X", "Interface", absX, -4096, 4096, "The absolute X position of the bobber. (only for absolute position mode)");
+		absY = config.getInt("Bobber Position Absolute Y", "Interface", absY, -2160, 2160, "The absolute Y position of the bobber. (only for absolute position mode)");
 		enableKeys = config.getBoolean("Enable keyboard", "Keyboard", enableKeys, "Whether the keyboard shortcuts are enabled.");
 		keyRec = config.getInt("Record Key", "Keyboard", keyRec, -1338, 250, "The key that will toggle recording.");
 		keyStr = config.getInt("Stream Key", "Keyboard", keyStr, -1338, 250, "The key that will toggle streaming.");
