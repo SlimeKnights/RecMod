@@ -52,7 +52,6 @@ public class PacketUpdatePlayerStatus extends AbstractPacket
 	@Override
 	public void handleServerSide (EntityPlayer player)
 	{
-		System.out.println(flag);
 		RecMod.instance.updatePlayerInformation(this.player, type, flag);
 
 		// Send the packet to all the players
