@@ -1,7 +1,8 @@
 package fuj1n.recmod.legacy;
 
-import fuj1n.recmod.RecMod;
 import java.io.*;
+
+import fuj1n.recmod.RecMod;
 
 /**
  * A reader of the raw config which reads all the values and calls a write in RecMod to an FML config.
@@ -9,18 +10,22 @@ import java.io.*;
  * @author fuj1n
  *
  */
-public class OldConfigConverter {
+public class OldConfigConverter
+{
 
 	public static File configFile;
 
-	public static void convert() {
+	public static void convert ()
+	{
 		RecMod rm = RecMod.instance;
 
-		if (!configFile.exists()) {
+		if (!configFile.exists())
+		{
 			return;
 		}
 
-		try {
+		try
+		{
 			BufferedReader b = new BufferedReader(new FileReader(configFile));
 			String line1 = b.readLine();
 			String line2 = b.readLine();
@@ -40,26 +45,38 @@ public class OldConfigConverter {
 
 			rm.instanciateConfig();
 			rm.writeToFile();
-		} catch (FileNotFoundException e) {
+		}
+		catch (FileNotFoundException e)
+		{
 			e.printStackTrace();
-		} catch (IOException e) {
+		}
+		catch (IOException e)
+		{
 			//Don't want the massive stacktrace if the file read fails.
 			//e.printStackTrace();
 		}
 	}
 
-	private static int convertToInteger(String s, int def) {
-		try {
+	private static int convertToInteger (String s, int def)
+	{
+		try
+		{
 			return Integer.parseInt(s);
-		} catch (Exception e) {
+		}
+		catch (Exception e)
+		{
 		}
 		return def;
 	}
 
-	private static boolean convertToBoolean(String s, boolean def) {
-		try {
+	private static boolean convertToBoolean (String s, boolean def)
+	{
+		try
+		{
 			return Boolean.parseBoolean(s);
-		} catch (Exception e) {
+		}
+		catch (Exception e)
+		{
 		}
 		return def;
 	}

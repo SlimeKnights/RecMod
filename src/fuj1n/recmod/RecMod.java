@@ -1,5 +1,8 @@
 package fuj1n.recmod;
 
+import java.io.File;
+import java.util.HashMap;
+
 import cpw.mods.fml.common.*;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
@@ -11,8 +14,6 @@ import fuj1n.recmod.command.CommandRec;
 import fuj1n.recmod.legacy.OldConfigConverter;
 import fuj1n.recmod.network.*;
 import fuj1n.recmod.network.packet.*;
-import java.io.File;
-import java.util.HashMap;
 import net.minecraft.command.ServerCommandManager;
 import net.minecraft.entity.player.*;
 import net.minecraft.server.MinecraftServer;
@@ -20,7 +21,8 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 
 @Mod(name = "Recording Status Mod", version = "v1.5", modid = "fuj1n.recmod", acceptableRemoteVersions = "*", canBeDeactivated = false)
-public class RecMod {
+public class RecMod
+{
 
 	@Instance("fuj1n.recmod")
 	public static RecMod instance;
@@ -50,21 +52,27 @@ public class RecMod {
 	public boolean mapsDirty = false;
 
 	@EventHandler
-	public void preinit(FMLPreInitializationEvent event) {
+	public void preinit (FMLPreInitializationEvent event)
+	{
 		FMLCommonHandler.instance().bus().register(new PlayerTracker());
 
 		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
 
 		OldConfigConverter.configFile = new File(event.getModConfigurationDirectory(), "recmod.ui");
 
-		if (event.getSide() == Side.CLIENT) {
+		if (event.getSide() == Side.CLIENT)
+		{
 			configFile = event.getSuggestedConfigurationFile();
 
-			if (OldConfigConverter.configFile.exists() && !configFile.exists()) {
+			if (OldConfigConverter.configFile.exists() && !configFile.exists())
+			{
 				OldConfigConverter.convert();
 				OldConfigConverter.configFile.delete();
-			} else {
-				if (OldConfigConverter.configFile.exists()) {
+			}
+			else
+			{
+				if (OldConfigConverter.configFile.exists())
+				{
 					OldConfigConverter.configFile.delete();
 				}
 
@@ -79,7 +87,8 @@ public class RecMod {
 	}
 
 	@EventHandler
-	public void init(FMLInitializationEvent event) {
+	public void init (FMLInitializationEvent event)
+	{
 		packetPipeline.initialise();
 
 		PacketPipeline pp = packetPipeline;
@@ -91,13 +100,16 @@ public class RecMod {
 	}
 
 	@EventHandler
-	public void postinit(FMLPostInitializationEvent event) {
+	public void postinit (FMLPostInitializationEvent event)
+	{
 		packetPipeline.postInitialise();
 	}
 
 	@EventHandler
-	public void serverStart(FMLServerStartedEvent event) {
-		if (MinecraftServer.getServer() == null) {
+	public void serverStart (FMLServerStartedEvent event)
+	{
+		if (MinecraftServer.getServer() == null)
+		{
 			return;
 		}
 
@@ -107,37 +119,47 @@ public class RecMod {
 		handler.registerCommand(new CommandRec());
 	}
 
-	public void updatePlayerInformation(String username, int type, boolean flag) {
+	public void updatePlayerInformation (String username, int type, boolean flag)
+	{
 		HashMap<String, Boolean> modifyMap;
-		if (type == 0) {
+		if (type == 0)
+		{
 			modifyMap = recorders;
-		} else {
+		}
+		else
+		{
 			modifyMap = streamers;
 		}
 
 		modifyMap.put(username, flag);
 	}
 
-	public boolean isPlayerRecording(String username) {
-		if (username == null) {
+	public boolean isPlayerRecording (String username)
+	{
+		if (username == null)
+		{
 			return false;
 		}
 
 		return recorders.get(username) != null ? recorders.get(username) : false;
 	}
 
-	public boolean isPlayerStreaming(String username) {
-		if (username == null) {
+	public boolean isPlayerStreaming (String username)
+	{
+		if (username == null)
+		{
 			return false;
 		}
 		return streamers.get(username) != null ? streamers.get(username) : false;
 	}
 
-	public void instanciateConfig() {
+	public void instanciateConfig ()
+	{
 		config = new Configuration(configFile, true);
 	}
 
-	public void readFromFile() {
+	public void readFromFile ()
+	{
 		config.load();
 
 		showMode = config.getInt("Bobber AutoShow Mode", "Interface", showMode, 0, 3, "The automatic behaviour of the ingame bobber visibility.");
@@ -149,48 +171,60 @@ public class RecMod {
 		keyStr = config.getInt("Stream Key", "Keyboard", keyStr, -1338, 250, "The key that will toggle streaming.");
 		keepState = config.getBoolean("Keep state", "General", keepState, "Whether the recording state is kept throughout the gaming session.");
 
-		if (config.hasChanged()) {
+		if (config.hasChanged())
+		{
 			config.save();
 		}
 	}
 
-	public void writeToFile() {
+	public void writeToFile ()
+	{
 		// Delete the config to force update
 		configFile.delete();
 
 		readFromFile();
 	}
 
-	public void removeUnneededData(String username) {
+	public void removeUnneededData (String username)
+	{
 		recorders.remove(username);
 		streamers.remove(username);
 	}
 
-	public void clearMaps() {
+	public void clearMaps ()
+	{
 		recorders.clear();
 		streamers.clear();
 	}
 
-	public void sendDataToPlayer(EntityPlayer player) {
-		for (int i = 0; i < recorders.size(); i++) {
+	public void sendDataToPlayer (EntityPlayer player)
+	{
+		for (int i = 0; i < recorders.size(); i++)
+		{
 			sendPacket(player, recorders.keySet().toArray()[i].toString(), 0, Boolean.parseBoolean(recorders.values().toArray()[i].toString()));
 		}
 
-		for (int i = 0; i < streamers.size(); i++) {
+		for (int i = 0; i < streamers.size(); i++)
+		{
 			sendPacket(player, streamers.keySet().toArray()[i].toString(), 1, Boolean.parseBoolean(streamers.values().toArray()[i].toString()));
 		}
 
-		if (player instanceof EntityPlayerMP) {
+		if (player instanceof EntityPlayerMP)
+		{
 			PacketEndOfInitialTransmission pckt = new PacketEndOfInitialTransmission();
 			packetPipeline.sendTo(pckt, (EntityPlayerMP) player);
 		}
 	}
 
-	public void sendPacket(EntityPlayer target, String player, int type, boolean flag) {
-		if (target instanceof EntityPlayerMP) {
+	public void sendPacket (EntityPlayer target, String player, int type, boolean flag)
+	{
+		if (target instanceof EntityPlayerMP)
+		{
 			PacketUpdatePlayerStatus pckt = new PacketUpdatePlayerStatus(player, type, flag);
 			packetPipeline.sendTo(pckt, (EntityPlayerMP) target);
-		} else {
+		}
+		else
+		{
 		}
 	}
 
