@@ -15,7 +15,7 @@ public class GuiSimple extends GuiContainer
 	public String boundPlayer;
 
 	public int guiState = 0;
-	public String[] stateNames = { translate("recmod.gui.pane.title.main"), translate("recmod.gui.pane.title.general"), translate("recmod.gui.pane.title.interface"), translate("recmod.gui.pane.title.keyboard"), translate("recmod.gui.pane.title.integration"), translate("recmod.gui.pane.title.testing") };
+	public String[] stateNames = { translate("recmod.gui.pane.title.main"), translate("recmod.gui.pane.title.general"), translate("recmod.gui.pane.title.interface"), translate("recmod.gui.pane.title.keyboard"), translate("recmod.gui.pane.title.notify"), translate("recmod.gui.pane.title.testing") };
 	public int[] returnStates = { -1337, 0, 0, 0, 0, 0 };
 
 	// Keyboard pane globals
@@ -47,7 +47,6 @@ public class GuiSimple extends GuiContainer
 	public void drawGuiContainerForegroundLayer (int par1, int par2)
 	{
 		this.fontRendererObj.drawString(translate("recmod.interface.name") + stateNames[guiState], 8, 11, 4210752);
-
 		switch (guiState)
 		{
 		case 2:
@@ -61,9 +60,6 @@ public class GuiSimple extends GuiContainer
 			GL11.glPushMatrix();
 			break;
 		case 4:
-			this.fontRendererObj.drawString(translate("recmod.gui.pane.nyitext1"), 8, 11 + fontRendererObj.FONT_HEIGHT * 2, 4210752);
-			this.fontRendererObj.drawString(translate("recmod.gui.pane.nyitext2"), 8, 11 + fontRendererObj.FONT_HEIGHT * 3, 4210752);
-			this.fontRendererObj.drawString(translate("recmod.gui.pane.nyitext3"), 8, 11 + fontRendererObj.FONT_HEIGHT * 4, 4210752);
 			break;
 		}
 	}
@@ -107,8 +103,13 @@ public class GuiSimple extends GuiContainer
 			buttonList.add(new GuiButton(1338, k + 8, l + 30 + buttonDelim * 1, buttonSize, 20, stateNames[1]));
 			buttonList.add(new GuiButton(1339, k + 8, l + 30 + buttonDelim * 2, buttonSize, 20, stateNames[2]));
 			buttonList.add(new GuiButton(1340, k + 8, l + 30 + buttonDelim * 3, buttonSize, 20, stateNames[3]));
-			buttonList.add(new GuiButton(1341, k + 8, l + 30 + buttonDelim * 4, buttonSize, 20, stateNames[4]));
-			buttonList.add(new GuiButton(-1111, k + 8, l + 30 + buttonDelim * 5, buttonSize, 20, stateNames[5]));
+			
+			GuiButton temp = new GuiButton(1341, k + 8, l + 30 + buttonDelim * 4, buttonSize, 20, stateNames[4]);
+			temp.enabled = false;
+			buttonList.add(temp);
+			temp = new GuiButton(-1111, k + 8, l + 30 + buttonDelim * 5, buttonSize, 20, stateNames[5]);
+			temp.enabled = false;
+			buttonList.add(temp);
 			break;
 		case 1:
 			buttonList.add(new GuiButton(5, k + 8, l + 30 + buttonDelim * 0, buttonSize, 20, translate("recmod.gui.pane.general.kstate").replace("$s", '\u00A7' + (RecMod.instance.keepState ? translate("recmod.gui.enabledcode") + translate("recmod.gui.enabled") : translate("recmod.gui.disabledcode") + translate("recmod.gui.disabled")))));

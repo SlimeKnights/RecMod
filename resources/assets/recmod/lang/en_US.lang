@@ -15,15 +15,11 @@ recmod.gui.pane.title.main=Main
 recmod.gui.pane.title.general=General
 recmod.gui.pane.title.interface=Interface
 recmod.gui.pane.title.keyboard=Keyboard
-recmod.gui.pane.title.integration=Integration - NYI
+recmod.gui.pane.title.notify=Notification
 recmod.gui.pane.title.testing=Testing
 
 recmod.gui.pane.main.recording=Recording
 recmod.gui.pane.main.streaming=Streaming
-
-recmod.gui.pane.nyitext1=This feature is still not
-recmod.gui.pane.nyitext2=implemented, trust me, it'll be
-recmod.gui.pane.nyitext3=awesome!
 
 recmod.gui.pane.general.kstate=Keep State: $s
 
