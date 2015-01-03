@@ -6,10 +6,10 @@ import net.minecraft.inventory.Container;
 public class ContainerDummy extends Container
 {
 
-	@Override
-	public boolean canInteractWith (EntityPlayer entityplayer)
-	{
-		return true;
-	}
+    @Override
+    public boolean canInteractWith (EntityPlayer entityplayer)
+    {
+        return true;
+    }
 
 }

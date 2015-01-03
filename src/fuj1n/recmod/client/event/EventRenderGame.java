@@ -1,140 +1,266 @@
 package fuj1n.recmod.client.event;
 
-import java.util.List;
+import java.util.*;
 
-import org.lwjgl.opengl.GL11;
-
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import fuj1n.recmod.RecMod;
 import fuj1n.recmod.lib.IndexReference;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.*;
-import net.minecraft.client.network.NetHandlerPlayClient;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.scoreboard.ScorePlayerTeam;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraft.client.network.*;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.entity.player.*;
+import net.minecraft.scoreboard.*;
+import net.minecraft.util.*;
+import net.minecraft.world.WorldSettings;
+import net.minecraftforge.client.event.*;
+import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public class EventRenderGame extends Gui
 {
 
-	private ResourceLocation indicatorsHigh = new ResourceLocation("recmod:textures/sheets/indicatorsx2.png");
-	private ResourceLocation indicatorsLow = new ResourceLocation("recmod:textures/sheets/indicators.png");
+    private ResourceLocation indicatorsHigh = new ResourceLocation("recmod:textures/sheets/indicatorsx2.png");
+    private ResourceLocation indicatorsLow = new ResourceLocation("recmod:textures/sheets/indicators.png");
 
-	@SubscribeEvent
-	public void onRenderGameOverlay (RenderGameOverlayEvent event)
-	{
-		if (event.type != RenderGameOverlayEvent.ElementType.ALL)
-		{
-			return;
-		}
-		Minecraft mc = Minecraft.getMinecraft();
-		ResourceLocation indicators = mc.isFancyGraphicsEnabled() ? indicatorsHigh : indicatorsLow;
+    private GuiPlayerTabOverlay to;
 
-		Tessellator tes = Tessellator.instance;
-		tes.setColorOpaque_F(1F, 1F, 1F);
+    @SubscribeEvent
+    public void preRenderGameOverlay (RenderGameOverlayEvent.Pre event)
+    {
+        if (event.type == ElementType.PLAYER_LIST)
+        {
+            event.setCanceled(true);
+            renderGameOverlay(event);
+        }
+    }
 
-		if (mc.gameSettings.keyBindPlayerList.getIsKeyPressed() && (!mc.isIntegratedServerRunning() || mc.thePlayer.sendQueue.playerInfoList.size() > 1 || mc.theWorld.getScoreboard().func_96539_a(0) != null))
-		{
-			mc.mcProfiler.startSection("playerList");
-			NetHandlerPlayClient nethandlerplayclient = mc.thePlayer.sendQueue;
-			List list = nethandlerplayclient.playerInfoList;
+    @SubscribeEvent
+    public void renderGameOverlay (RenderGameOverlayEvent event)
+    {
+        Minecraft mc = Minecraft.getMinecraft();
+        ResourceLocation indicators = mc.isFancyGraphicsEnabled() ? indicatorsHigh : indicatorsLow;
 
-			int k = event.resolution.getScaledWidth();
-			int i2;
-			int j2;
-			int k2;
-			int l2;
-			int i3;
-			int j3;
-			int k3;
-			j2 = nethandlerplayclient.currentServerMaxPlayers;
-			l2 = j2;
+        if (event.type == ElementType.PLAYER_LIST)
+        {
+            if (to == null)
+            {
+                to = Minecraft.getMinecraft().ingameGUI.getTabList();
+            }
 
-			for (k2 = 1; l2 > 20; l2 = (j2 + k2 - 1) / k2)
-			{
-				++k2;
-			}
+            int infooffset = 1;
 
-			int j5 = 300 / k2;
+            int width = event.resolution.getScaledWidth();
+            Scoreboard scoreboard = mc.theWorld.getScoreboard();
+            ScoreObjective scoreobjective = mc.theWorld.getScoreboard().getObjectiveInDisplaySlot(0);
 
-			if (j5 > 150)
-			{
-				j5 = 150;
-			}
+            NetHandlerPlayClient nethandlerplayclient = mc.thePlayer.sendQueue;
+            List list = to.field_175252_a.sortedCopy(nethandlerplayclient.func_175106_d());
+            int j = 0;
+            int k = 0;
+            Iterator iterator = list.iterator();
+            int l;
 
-			int k5 = (k - k2 * j5) / 2;
-			byte b0 = 10;
+            while (iterator.hasNext())
+            {
+                NetworkPlayerInfo networkplayerinfo = (NetworkPlayerInfo) iterator.next();
+                l = mc.fontRendererObj.getStringWidth(to.func_175243_a(networkplayerinfo));
+                j = Math.max(j, l) + 24;
+                k = Math.max(k, l);
+            }
 
-			for (i3 = 0; i3 < j2; ++i3)
-			{
-				k3 = k5 + i3 % k2 * j5;
-				j3 = b0 + i3 / k2 * 9;
+            list = list.subList(0, Math.min(list.size(), 80));
+            int j3 = list.size();
+            int k3 = j3;
 
-				GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-				GL11.glEnable(GL11.GL_ALPHA_TEST);
+            for (l = 1; k3 > 20; k3 = (j3 + l - 1) / l)
+            {
+                ++l;
+            }
 
-				if (i3 < list.size())
-				{
-					GuiPlayerInfo guiplayerinfo = (GuiPlayerInfo) list.get(i3);
-					ScorePlayerTeam scoreplayerteam = mc.theWorld.getScoreboard().getPlayersTeam(guiplayerinfo.name);
-					String s3 = ScorePlayerTeam.formatPlayerName(scoreplayerteam, guiplayerinfo.name);
+            boolean flag = mc.isIntegratedServerRunning() || mc.getNetHandler().getNetworkManager().getIsencrypted();
+            int i1;
 
-					int infooffset = 20;
+            if (scoreobjective != null)
+            {
+                if (scoreobjective.getRenderType() == IScoreObjectiveCriteria.EnumRenderType.HEARTS)
+                {
+                    i1 = 90;
+                }
+                else
+                {
+                    i1 = k;
+                }
+            }
+            else
+            {
+                i1 = 0;
+            }
 
-					int i6 = k3 + j5 - 12 - 5;
-					mc.getTextureManager().bindTexture(indicators);
-					int indicatorRecIndex = RecMod.instance.isPlayerRecording(guiplayerinfo.name) ? IndexReference.ICON_RED_INDEX : IndexReference.ICON_GRAY_INDEX;
-					int indicatorStrIndex = RecMod.instance.isPlayerStreaming(guiplayerinfo.name) ? IndexReference.ICON_GREEN_INDEX : IndexReference.ICON_GRAY_INDEX;
+            int j1 = Math.min(l * ((flag ? 9 : 0) + j + i1 + 13), width - 50) / l;
+            int k1 = width / 2 - (j1 * l + (l - 1) * 5) / 2;
+            int l1 = 10;
+            int i2 = j1 * l + (l - 1) * 5;
+            List list1 = null;
+            List list2 = null;
+            Iterator iterator1;
+            String s;
 
-					drawTexturedModalRect(i6 - 8 - infooffset, j3, indicatorRecIndex * 8, (int) Math.floor(indicatorRecIndex / 32) * 8 + IndexReference.RES_SSD, 8, 8);
-					drawTexturedModalRect(i6 - 8 - (infooffset - 8), j3, indicatorStrIndex * 8, (int) Math.floor(indicatorStrIndex / 32) * 8 + IndexReference.RES_SSD, 8, 8);
-				}
-			}
-		}
-		else if (!mc.gameSettings.keyBindPlayerList.getIsKeyPressed() && RecMod.instance.showSelf && mc.currentScreen == null)
-		{
-			int x;
-			int y;
+            if (to.header != null)
+            {
+                list1 = mc.fontRendererObj.listFormattedStringToWidth(to.header.getFormattedText(), width - 50);
 
-			switch (RecMod.instance.posMode)
-			{
-			case 0:
-				x = 0;
-				y = 0;
-				break;
-			case 1:
-				x = event.resolution.getScaledWidth() - 32;
-				y = 0;
-				break;
-			case 2:
-				x = event.resolution.getScaledWidth() / 2 - 16;
-				y = event.resolution.getScaledHeight() / 2 - 8;
-				break;
-			case 3:
-				x = 0;
-				y = event.resolution.getScaledHeight() - 16;
-				break;
-			case 4:
-				x = event.resolution.getScaledWidth() - 32;
-				y = event.resolution.getScaledHeight() - 16;
-				break;
-			case 5:
-				x = event.resolution.getScaledWidth() / 2 - 16 + RecMod.instance.absX;
-				y = event.resolution.getScaledHeight() / 2 - 8 + RecMod.instance.absY;
-				break;
-			default:
-				x = event.resolution.getScaledWidth() - 32;
-				y = 0;
-			}
+                for (iterator1 = list1.iterator(); iterator1.hasNext(); i2 = Math.max(i2, mc.fontRendererObj.getStringWidth(s)))
+                {
+                    s = (String) iterator1.next();
+                }
+            }
 
-			int indicatorRecIndex = RecMod.instance.isPlayerRecording(mc.thePlayer.getCommandSenderName()) ? IndexReference.ICON_RED_INDEX : IndexReference.ICON_GRAY_INDEX;
-			int indicatorStrIndex = RecMod.instance.isPlayerStreaming(mc.thePlayer.getCommandSenderName()) ? IndexReference.ICON_GREEN_INDEX : IndexReference.ICON_GRAY_INDEX;
+            if (to.footer != null)
+            {
+                list2 = mc.fontRendererObj.listFormattedStringToWidth(to.footer.getFormattedText(), width - 50);
 
-			mc.getTextureManager().bindTexture(indicators);
-			drawTexturedModalRect(x, y, indicatorRecIndex * 16, (int) Math.floor(indicatorRecIndex / 16) * 16 + IndexReference.RES_SD, 16, 16);
-			drawTexturedModalRect(x + 16, y, indicatorStrIndex * 16, (int) Math.floor(indicatorStrIndex / 16) * 16 + IndexReference.RES_SD, 16, 16);
-		}
-	}
+                for (iterator1 = list2.iterator(); iterator1.hasNext(); i2 = Math.max(i2, mc.fontRendererObj.getStringWidth(s)))
+                {
+                    s = (String) iterator1.next();
+                }
+            }
 
+            int j2;
+
+            if (list1 != null)
+            {
+                drawRect(width / 2 - i2 / 2 - 1, l1 - 1, width / 2 + i2 / 2 + 1, l1 + list1.size() * mc.fontRendererObj.FONT_HEIGHT, Integer.MIN_VALUE);
+
+                for (iterator1 = list1.iterator(); iterator1.hasNext(); l1 += mc.fontRendererObj.FONT_HEIGHT)
+                {
+                    s = (String) iterator1.next();
+                    j2 = mc.fontRendererObj.getStringWidth(s);
+                    mc.fontRendererObj.drawStringWithShadow(s, (float) (width / 2 - j2 / 2), (float) l1, -1);
+                }
+
+                ++l1;
+            }
+
+            drawRect(width / 2 - i2 / 2 - 1, l1 - 1, width / 2 + i2 / 2 + 1, l1 + k3 * 9, Integer.MIN_VALUE);
+
+            for (int l3 = 0; l3 < j3; ++l3)
+            {
+                int i4 = l3 / k3;
+                j2 = l3 % k3;
+                int k2 = k1 + i4 * j1 + i4 * 5;
+                int l2 = l1 + j2 * 9;
+                drawRect(k2, l2, k2 + j1, l2 + 8, 553648127);
+                GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+                GlStateManager.enableAlpha();
+                GlStateManager.enableBlend();
+                GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+
+                if (l3 < list.size())
+                {
+                    NetworkPlayerInfo networkplayerinfo1 = (NetworkPlayerInfo) list.get(l3);
+                    String s1 = to.func_175243_a(networkplayerinfo1);
+
+                    if (flag)
+                    {
+                        mc.getTextureManager().bindTexture(networkplayerinfo1.getLocationSkin());
+                        Gui.drawScaledCustomSizeModalRect(k2, l2, 8.0F, 8.0F, 8, 8, 8, 8, 64.0F, 64.0F);
+                        EntityPlayer entityplayer = mc.theWorld.getPlayerEntityByUUID(networkplayerinfo1.getGameProfile().getId());
+
+                        if (entityplayer != null && entityplayer.func_175148_a(EnumPlayerModelParts.HAT))
+                        {
+                            Gui.drawScaledCustomSizeModalRect(k2, l2, 40.0F, 8.0F, 8, 8, 8, 8, 64.0F, 64.0F);
+                        }
+
+                        k2 += 9;
+                    }
+
+                    if (networkplayerinfo1.getGameType() == WorldSettings.GameType.SPECTATOR)
+                    {
+                        s1 = EnumChatFormatting.ITALIC + s1;
+                        mc.fontRendererObj.drawStringWithShadow(s1, (float) k2, (float) l2, -1862270977);
+                    }
+                    else
+                    {
+                        mc.fontRendererObj.drawStringWithShadow(s1, (float) k2, (float) l2, -1);
+                    }
+
+                    mc.getTextureManager().bindTexture(indicators);
+                    int indicatorRecIndex = RecMod.instance.isPlayerRecording(networkplayerinfo1.getGameProfile().getName()) ? IndexReference.ICON_RED_INDEX : IndexReference.ICON_GRAY_INDEX;
+                    int indicatorStrIndex = RecMod.instance.isPlayerStreaming(networkplayerinfo1.getGameProfile().getName()) ? IndexReference.ICON_GREEN_INDEX : IndexReference.ICON_GRAY_INDEX;
+                    drawTexturedModalRect(width / 2 + i2 / 2 + 1 - infooffset - 16, l2, indicatorRecIndex * 8, (int) Math.floor(indicatorRecIndex / 32) * 8 + IndexReference.RES_SSD, 8, 8);
+                    drawTexturedModalRect(width / 2 + i2 / 2 + 1 - infooffset - 8, l2, indicatorStrIndex * 8, (int) Math.floor(indicatorStrIndex / 32) * 8 + IndexReference.RES_SSD, 8, 8);
+
+                    if (scoreobjective != null && networkplayerinfo1.getGameType() != WorldSettings.GameType.SPECTATOR)
+                    {
+                        int j4 = k2 + j + 1;
+                        int i3 = j4 + i1;
+
+                        if (i3 - j4 > 5)
+                        {
+                            // Draw Scoreboard Values
+                            to.func_175247_a(scoreobjective, l2, networkplayerinfo1.getGameProfile().getName(), j4 - 24, i3 - 24, networkplayerinfo1);
+                        }
+                    }
+
+                    // Draw Player Ping
+                    to.func_175245_a(j1, k2 - (flag ? 9 : 0) - 18, l2, networkplayerinfo1);
+                }
+            }
+
+            if (list2 != null)
+            {
+                l1 += k3 * 9 + 1;
+                drawRect(width / 2 - i2 / 2 - 1, l1 - 1, width / 2 + i2 / 2 + 1, l1 + list2.size() * mc.fontRendererObj.FONT_HEIGHT, Integer.MIN_VALUE);
+                drawRect(width / 2 - i2 / 2 - 1, l1 - 1, width / 2 + i2 / 2 + 1, l1 + list2.size() * mc.fontRendererObj.FONT_HEIGHT, Integer.MIN_VALUE);
+
+                for (iterator1 = list2.iterator(); iterator1.hasNext(); l1 += mc.fontRendererObj.FONT_HEIGHT)
+                {
+                    s = (String) iterator1.next();
+                    j2 = mc.fontRendererObj.getStringWidth(s);
+                    mc.fontRendererObj.drawStringWithShadow(s, (float) (width / 2 - j2 / 2), (float) l1, -1);
+                }
+            }
+        }
+        else if (event.type == ElementType.ALL && RecMod.instance.showSelf && mc.currentScreen == null)
+        {
+            int x;
+            int y;
+            switch (RecMod.instance.posMode)
+            {
+            case 0:
+                x = 0;
+                y = 0;
+                break;
+            case 1:
+                x = event.resolution.getScaledWidth() - 32;
+                y = 0;
+                break;
+            case 2:
+                x = event.resolution.getScaledWidth() / 2 - 16;
+                y = event.resolution.getScaledHeight() / 2 - 8;
+                break;
+            case 3:
+                x = 0;
+                y = event.resolution.getScaledHeight() - 16;
+                break;
+            case 4:
+                x = event.resolution.getScaledWidth() - 32;
+                y = event.resolution.getScaledHeight() - 16;
+                break;
+            case 5:
+                x = event.resolution.getScaledWidth() / 2 - 16 + RecMod.instance.absX;
+                y = event.resolution.getScaledHeight() / 2 - 8 + RecMod.instance.absY;
+                break;
+            default:
+                x = event.resolution.getScaledWidth() - 32;
+                y = 0;
+            }
+
+            int indicatorRecIndex = RecMod.instance.isPlayerRecording(mc.thePlayer.getName()) ? IndexReference.ICON_RED_INDEX : IndexReference.ICON_GRAY_INDEX;
+            int indicatorStrIndex = RecMod.instance.isPlayerStreaming(mc.thePlayer.getName()) ? IndexReference.ICON_GREEN_INDEX : IndexReference.ICON_GRAY_INDEX;
+            mc.getTextureManager().bindTexture(indicators);
+            drawTexturedModalRect(x, y, indicatorRecIndex * 16, (int) Math.floor(indicatorRecIndex / 16) * 16 + IndexReference.RES_SD, 16, 16);
+            drawTexturedModalRect(x + 16, y, indicatorStrIndex * 16, (int) Math.floor(indicatorStrIndex / 16) * 16 + IndexReference.RES_SD, 16, 16);
+        }
+    }
 }
