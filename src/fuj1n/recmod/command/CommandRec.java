@@ -1,12 +1,17 @@
 package fuj1n.recmod.command;
 
-import java.util.*;
-
 import fuj1n.recmod.RecMod;
 import fuj1n.recmod.network.packet.PacketClientCommand;
-import net.minecraft.command.*;
-import net.minecraft.entity.player.*;
-import net.minecraft.util.*;
+import net.minecraft.command.CommandBase;
+import net.minecraft.command.CommandException;
+import net.minecraft.command.ICommandSender;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.ChatComponentText;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class CommandRec extends CommandBase
 {
@@ -18,7 +23,7 @@ public class CommandRec extends CommandBase
     }
 
     @Override
-    public String getName ()
+    public String getCommandName ()
     {
         return "rec";
     }
@@ -38,7 +43,7 @@ public class CommandRec extends CommandBase
     }
 
     @Override
-    public void execute (ICommandSender icommandsender, String[] astring) throws CommandException
+    public void processCommand(ICommandSender icommandsender, String[] astring) throws CommandException
     {
         if (!(icommandsender instanceof EntityPlayer))
         {
@@ -85,9 +90,7 @@ public class CommandRec extends CommandBase
     }
 
     @Override
-    public boolean canCommandSenderUse (ICommandSender icommandsender)
-    {
+    public boolean canCommandSenderUseCommand(ICommandSender sender) {
         return true;
     }
-
 }

@@ -1,20 +1,27 @@
 package fuj1n.recmod.client.event;
 
-import java.util.*;
-
 import fuj1n.recmod.RecMod;
 import fuj1n.recmod.lib.IndexReference;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.*;
-import net.minecraft.client.network.*;
+import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.GuiPlayerTabOverlay;
+import net.minecraft.client.network.NetHandlerPlayClient;
+import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.entity.player.*;
-import net.minecraft.scoreboard.*;
-import net.minecraft.util.*;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EnumPlayerModelParts;
+import net.minecraft.scoreboard.IScoreObjectiveCriteria;
+import net.minecraft.scoreboard.ScoreObjective;
+import net.minecraft.scoreboard.Scoreboard;
+import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.WorldSettings;
-import net.minecraftforge.client.event.*;
+import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+
+import java.util.Iterator;
+import java.util.List;
 
 public class EventRenderGame extends Gui
 {
@@ -54,7 +61,7 @@ public class EventRenderGame extends Gui
             ScoreObjective scoreobjective = mc.theWorld.getScoreboard().getObjectiveInDisplaySlot(0);
 
             NetHandlerPlayClient nethandlerplayclient = mc.thePlayer.sendQueue;
-            List list = to.field_175252_a.sortedCopy(nethandlerplayclient.func_175106_d());
+            List list = to.field_175252_a.sortedCopy(nethandlerplayclient.getPlayerInfoMap());
             int j = 0;
             int k = 0;
             Iterator iterator = list.iterator();
@@ -63,7 +70,7 @@ public class EventRenderGame extends Gui
             while (iterator.hasNext())
             {
                 NetworkPlayerInfo networkplayerinfo = (NetworkPlayerInfo) iterator.next();
-                l = mc.fontRendererObj.getStringWidth(to.func_175243_a(networkplayerinfo));
+                l = mc.fontRendererObj.getStringWidth(to.getPlayerName(networkplayerinfo));
                 j = Math.max(j, l) + 24;
                 k = Math.max(k, l);
             }
@@ -158,7 +165,7 @@ public class EventRenderGame extends Gui
                 if (l3 < list.size())
                 {
                     NetworkPlayerInfo networkplayerinfo1 = (NetworkPlayerInfo) list.get(l3);
-                    String s1 = to.func_175243_a(networkplayerinfo1);
+                    String s1 = to.getPlayerName(networkplayerinfo1);
 
                     if (flag)
                     {
@@ -166,7 +173,7 @@ public class EventRenderGame extends Gui
                         Gui.drawScaledCustomSizeModalRect(k2, l2, 8.0F, 8.0F, 8, 8, 8, 8, 64.0F, 64.0F);
                         EntityPlayer entityplayer = mc.theWorld.getPlayerEntityByUUID(networkplayerinfo1.getGameProfile().getId());
 
-                        if (entityplayer != null && entityplayer.func_175148_a(EnumPlayerModelParts.HAT))
+                        if (entityplayer != null && entityplayer.isWearing(EnumPlayerModelParts.HAT))
                         {
                             Gui.drawScaledCustomSizeModalRect(k2, l2, 40.0F, 8.0F, 8, 8, 8, 8, 64.0F, 64.0F);
                         }
@@ -198,12 +205,12 @@ public class EventRenderGame extends Gui
                         if (i3 - j4 > 5)
                         {
                             // Draw Scoreboard Values
-                            to.func_175247_a(scoreobjective, l2, networkplayerinfo1.getGameProfile().getName(), j4 - 24, i3 - 24, networkplayerinfo1);
+                            to.drawScoreboardValues(scoreobjective, l2, networkplayerinfo1.getGameProfile().getName(), j4 - 24, i3 - 24, networkplayerinfo1);
                         }
                     }
 
                     // Draw Player Ping
-                    to.func_175245_a(j1, k2 - (flag ? 9 : 0) - 18, l2, networkplayerinfo1);
+                    to.drawPing(j1, k2 - (flag ? 9 : 0) - 18, l2, networkplayerinfo1);
                 }
             }
 
