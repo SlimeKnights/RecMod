@@ -5,40 +5,34 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.entity.player.EntityPlayer;
 
-public class PacketEndOfInitialTransmission extends AbstractPacket
-{
+public class PacketEndOfInitialTransmission extends AbstractPacket {
 
-    public PacketEndOfInitialTransmission()
-    {
+  public PacketEndOfInitialTransmission() {
 
-    }
+  }
 
-    @Override
-    public void encodeInto (ChannelHandlerContext ctx, ByteBuf buffer)
-    {
+  @Override
+  public void encodeInto(ChannelHandlerContext ctx, ByteBuf buffer) {
 
-    }
+  }
 
-    @Override
-    public void decodeInto (ChannelHandlerContext ctx, ByteBuf buffer)
-    {
+  @Override
+  public void decodeInto(ChannelHandlerContext ctx, ByteBuf buffer) {
 
-    }
+  }
 
-    @Override
-    public void handleClientSide (EntityPlayer player)
-    {
-        //TODO non-temporary solution to NPE
-        if(player == null)
-            return;
+  @Override
+  public void handleClientSide(EntityPlayer player) {
+    //TODO non-temporary solution to NPE
+    if (player == null)
+      return;
 
-        RecMod.packetPipeline.sendToServer(new PacketUpdatePlayerStatus(player.getName(), 0, RecMod.instance.keepState ? RecMod.instance.recState : false));
-        RecMod.packetPipeline.sendToServer(new PacketUpdatePlayerStatus(player.getName(), 1, RecMod.instance.keepState ? RecMod.instance.strState : false));
-    }
+    RecMod.packetPipeline.sendToServer(new PacketUpdatePlayerStatus(player.getName(), 0, RecMod.instance.keepState ? RecMod.instance.recState : false));
+    RecMod.packetPipeline.sendToServer(new PacketUpdatePlayerStatus(player.getName(), 1, RecMod.instance.keepState ? RecMod.instance.strState : false));
+  }
 
-    @Override
-    public void handleServerSide (EntityPlayer player)
-    {
-    }
+  @Override
+  public void handleServerSide(EntityPlayer player) {
+  }
 
 }
