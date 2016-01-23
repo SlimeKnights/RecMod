@@ -28,6 +28,10 @@ public class PacketEndOfInitialTransmission extends AbstractPacket
     @Override
     public void handleClientSide (EntityPlayer player)
     {
+        //TODO non-temporary solution to NPE
+        if(player == null)
+            return;
+
         RecMod.packetPipeline.sendToServer(new PacketUpdatePlayerStatus(player.getName(), 0, RecMod.instance.keepState ? RecMod.instance.recState : false));
         RecMod.packetPipeline.sendToServer(new PacketUpdatePlayerStatus(player.getName(), 1, RecMod.instance.keepState ? RecMod.instance.strState : false));
     }

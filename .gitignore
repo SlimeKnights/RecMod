@@ -13,6 +13,7 @@ Thumbs.db
 #gradle stuff
 /.gradle
 /build/
+/out/
 /run/
 #IDEA files from Gradle
 .idea/

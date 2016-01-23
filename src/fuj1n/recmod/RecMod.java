@@ -20,7 +20,7 @@ import net.minecraftforge.fml.common.event.*;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 
-@Mod(name = "Recording Status Mod", version = "v1.5", modid = "fuj1n.recmod", acceptableRemoteVersions = "*", canBeDeactivated = false)
+@Mod(name = "Recording Status Mod", version = "v1.5.1", modid = "fuj1n.recmod", acceptableRemoteVersions = "*", canBeDeactivated = false)
 public class RecMod
 {
 
