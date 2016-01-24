@@ -9,6 +9,10 @@ Distribution
 
 This mod may be distributed outside this repository as long as the creator(fuj1n) is credited. The same applies to modification of the code to meet additional needs and the re-distribution of the modified code.
 
+Public Builds
+------------
+Latest public builds available from [CurseForge](http://minecraft.curseforge.com/projects/recording-status-mod).
+
 Build Status
 ------------
 [![Build Status](https://dvs1.progwml6.com/jenkins/buildStatus/icon?job=RecMod)](https://dvs1.progwml6.com/jenkins/job/RecMod/)
