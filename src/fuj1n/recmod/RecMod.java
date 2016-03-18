@@ -4,7 +4,6 @@ import fuj1n.recmod.client.event.EventClientEntityLogin;
 import fuj1n.recmod.client.event.EventClientTick;
 import fuj1n.recmod.client.event.EventRenderGame;
 import fuj1n.recmod.command.CommandRec;
-import fuj1n.recmod.legacy.OldConfigConverter;
 import fuj1n.recmod.network.GuiHandler;
 import fuj1n.recmod.network.PlayerTracker;
 import fuj1n.recmod.network.packet.PacketClientCommand;
@@ -17,7 +16,6 @@ import java.util.HashMap;
 import net.minecraft.command.ServerCommandManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -30,6 +28,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 @Mod(name = "Recording Status Mod", version = "v1.5.2", modid = "fuj1n.recmod", acceptableRemoteVersions = "*", canBeDeactivated = false)
 public class RecMod {
@@ -62,31 +61,20 @@ public class RecMod {
   public boolean mapsDirty = false;
 
   @EventHandler
-  public void preinit(FMLPreInitializationEvent event) {
-    FMLCommonHandler.instance().bus().register(new PlayerTracker());
+  public void preInit(FMLPreInitializationEvent event) {
+    MinecraftForge.EVENT_BUS.register(new PlayerTracker());
 
     NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
-
-    OldConfigConverter.configFile = new File(event.getModConfigurationDirectory(), "recmod.ui");
 
     if (event.getSide() == Side.CLIENT) {
       configFile = event.getSuggestedConfigurationFile();
 
-      if (OldConfigConverter.configFile.exists() && !configFile.exists()) {
-        OldConfigConverter.convert();
-        OldConfigConverter.configFile.delete();
-      } else {
-        if (OldConfigConverter.configFile.exists()) {
-          OldConfigConverter.configFile.delete();
-        }
-
-        instanciateConfig();
-      }
-
+      instantiateConfig();
       readFromFile();
+
       MinecraftForge.EVENT_BUS.register(new EventRenderGame());
-      FMLCommonHandler.instance().bus().register(new EventClientEntityLogin());
-      FMLCommonHandler.instance().bus().register(new EventClientTick());
+      MinecraftForge.EVENT_BUS.register(new EventClientEntityLogin());
+      MinecraftForge.EVENT_BUS.register(new EventClientTick());
     }
   }
 
@@ -95,6 +83,7 @@ public class RecMod {
     packetPipeline.initialise();
 
     PacketPipeline pp = packetPipeline;
+
     // Packet Registration
     pp.registerPacket(PacketUpdatePlayerStatus.class);
     pp.registerPacket(PacketRemovePlayer.class);
@@ -103,19 +92,19 @@ public class RecMod {
   }
 
   @EventHandler
-  public void postinit(FMLPostInitializationEvent event) {
+  public void postInit(FMLPostInitializationEvent event) {
     packetPipeline.postInitialise();
   }
 
   @EventHandler
   public void serverStart(FMLServerStartedEvent event) {
-    if (MinecraftServer.getServer() == null) {
+    if (FMLCommonHandler.instance().getMinecraftServerInstance() == null) {
       return;
     }
 
     clearMaps();
 
-    ServerCommandManager handler = (ServerCommandManager) MinecraftServer.getServer().getCommandManager();
+    ServerCommandManager handler = (ServerCommandManager) FMLCommonHandler.instance().getMinecraftServerInstance().getCommandManager();
     handler.registerCommand(new CommandRec());
   }
 
@@ -131,24 +120,19 @@ public class RecMod {
   }
 
   public boolean isPlayerRecording(String username) {
-    if (username == null) {
-      return false;
-    }
-
-    return recorders.get(username) != null ? recorders.get(username) : false;
+    return username != null && (recorders.containsKey(username) ? recorders.get(username) : false);
   }
 
   public boolean isPlayerStreaming(String username) {
-    if (username == null) {
-      return false;
-    }
-    return streamers.get(username) != null ? streamers.get(username) : false;
+    return username != null && (streamers.containsKey(username) ? streamers.get(username) : false);
   }
 
-  public void instanciateConfig() {
+  @SideOnly(Side.CLIENT)
+  public void instantiateConfig() {
     config = new Configuration(configFile, true);
   }
 
+  @SideOnly(Side.CLIENT)
   public void readFromFile() {
     config.load();
 
@@ -166,6 +150,7 @@ public class RecMod {
     }
   }
 
+  @SideOnly(Side.CLIENT)
   public void writeToFile() {
     // Delete the config to force update
     configFile.delete();
@@ -202,8 +187,6 @@ public class RecMod {
     if (target instanceof EntityPlayerMP) {
       PacketUpdatePlayerStatus pckt = new PacketUpdatePlayerStatus(player, type, flag);
       packetPipeline.sendTo(pckt, (EntityPlayerMP) target);
-    } else {
     }
   }
-
 }

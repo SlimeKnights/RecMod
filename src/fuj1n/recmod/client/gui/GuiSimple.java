@@ -7,7 +7,7 @@ import java.io.IOException;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.StatCollector;
+import net.minecraft.util.text.translation.I18n;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
@@ -90,8 +90,11 @@ public class GuiSimple extends GuiContainer {
 
     switch (guiState) {
       case 0:
-        buttonList.add(new GuiButton(0, k + 8 + smallButtonSize * 0, l + 30 + buttonDelim * 0, smallButtonSize, 20, '\u00A7' + (RecMod.instance.isPlayerRecording(boundPlayer) ? translate("recmod.gui.enabledcode") : translate("recmod.gui.disabledcode")) + translate("recmod.gui.pane.main.recording")));
-        buttonList.add(new GuiButton(1, k + 8 + smallButtonSize * 1, l + 30 + buttonDelim * 0, smallButtonSize, 20, '\u00A7' + (RecMod.instance.isPlayerStreaming(boundPlayer) ? translate("recmod.gui.enabledcode") : translate("recmod.gui.disabledcode")) + translate("recmod.gui.pane.main.streaming")));
+        GuiButton bRec = new GuiButton(0, k + 8 + smallButtonSize * 0, l + 30 + buttonDelim * 0, smallButtonSize, 20, '\u00A7' + (RecMod.instance.isPlayerRecording(boundPlayer) ? translate("recmod.gui.enabledcode") : translate("recmod.gui.disabledcode")) + translate("recmod.gui.pane.main.recording"));
+        GuiButton bStr = new GuiButton(1, k + 8 + smallButtonSize * 1, l + 30 + buttonDelim * 0, smallButtonSize, 20, '\u00A7' + (RecMod.instance.isPlayerStreaming(boundPlayer) ? translate("recmod.gui.enabledcode") : translate("recmod.gui.disabledcode")) + translate("recmod.gui.pane.main.streaming"));
+        buttonList.add(bRec);
+        buttonList.add(bStr);
+
         buttonList.add(new GuiButton(1338, k + 8, l + 30 + buttonDelim * 1, buttonSize, 20, stateNames[1]));
         buttonList.add(new GuiButton(1339, k + 8, l + 30 + buttonDelim * 2, buttonSize, 20, stateNames[2]));
         buttonList.add(new GuiButton(1340, k + 8, l + 30 + buttonDelim * 3, buttonSize, 20, stateNames[3]));
@@ -107,7 +110,9 @@ public class GuiSimple extends GuiContainer {
         buttonList.add(new GuiButton(5, k + 8, l + 30 + buttonDelim * 0, buttonSize, 20, translate("recmod.gui.pane.general.kstate").replace("$s", '\u00A7' + (RecMod.instance.keepState ? translate("recmod.gui.enabledcode") + translate("recmod.gui.enabled") : translate("recmod.gui.disabledcode") + translate("recmod.gui.disabled")))));
         break;
       case 2:
-        buttonList.add(new GuiButton(3, k + 8, l + 30 + buttonDelim * 0, buttonSize, 20, translate("recmod.gui.pane.interface.bobber").replace("$s", '\u00A7' + (RecMod.instance.showSelf ? translate("recmod.gui.enabledcode") + translate("recmod.gui.enabled") : translate("recmod.gui.disabledcode") + translate("recmod.gui.disabled")))));
+        temp = new GuiButton(3, k + 8, l + 30 + buttonDelim * 0, buttonSize, 20, translate("recmod.gui.pane.interface.bobber").replace("$s", '\u00A7' + (RecMod.instance.showSelf ? translate("recmod.gui.enabledcode") + translate("recmod.gui.enabled") : translate("recmod.gui.disabledcode") + translate("recmod.gui.disabled"))));
+        temp.enabled = RecMod.instance.showMode == 0;
+        buttonList.add(temp);
         buttonList.add(new GuiButton(4, k + 8, l + 30 + buttonDelim * 1, buttonSize, 20, translate("recmod.gui.pane.interface.showMode").replace("$m", '\u00A7' + (RecMod.instance.showMode != 0 ? translate("recmod.gui.enabledcode") : translate("recmod.gui.disabledcode")) + showModes[RecMod.instance.showMode])));
         buttonList.add(new GuiButton(6, k + 8, l + 30 + buttonDelim * 2, buttonSize, 20, translate("recmod.gui.pane.interface.posMode").replace("$m", posModes[RecMod.instance.posMode])));
 
@@ -163,7 +168,8 @@ public class GuiSimple extends GuiContainer {
 
           break;
         case 3:
-          RecMod.instance.showSelf = !RecMod.instance.showSelf;
+          if (RecMod.instance.showMode == 0)
+            RecMod.instance.showSelf = !RecMod.instance.showSelf;
 
           break;
         case 4:
@@ -242,6 +248,6 @@ public class GuiSimple extends GuiContainer {
   }
 
   private String translate(String s) {
-    return StatCollector.translateToLocal(s);
+    return I18n.translateToLocal(s);
   }
 }
