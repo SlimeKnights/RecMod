@@ -12,11 +12,11 @@ import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EnumPlayerModelParts;
-import net.minecraft.scoreboard.IScoreObjectiveCriteria;
+import net.minecraft.scoreboard.IScoreCriteria;
 import net.minecraft.scoreboard.ScoreObjective;
 import net.minecraft.scoreboard.Scoreboard;
-import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.WorldSettings;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
@@ -53,7 +53,7 @@ public class EventRenderGame extends Gui {
     ScoreObjective scoreObjectiveIn = scoreboardIn.getObjectiveInDisplaySlot(0);
 
     NetHandlerPlayClient nethandlerplayclient = mc.thePlayer.sendQueue;
-    List<NetworkPlayerInfo> list = to.field_175252_a.<NetworkPlayerInfo>sortedCopy(nethandlerplayclient.getPlayerInfoMap());
+    List<NetworkPlayerInfo> list = GuiPlayerTabOverlay.ENTRY_ORDERING.<NetworkPlayerInfo>sortedCopy(nethandlerplayclient.getPlayerInfoMap());
 
     int namePingGap = 0;
     int j = 0;
@@ -62,8 +62,8 @@ public class EventRenderGame extends Gui {
       int nameWidth = mc.fontRendererObj.getStringWidth(to.getPlayerName(networkplayerinfo));
       namePingGap = Math.max(namePingGap, nameWidth);
 
-      if (scoreObjectiveIn != null && scoreObjectiveIn.getRenderType() != IScoreObjectiveCriteria.EnumRenderType.HEARTS) {
-        nameWidth = mc.fontRendererObj.getStringWidth(" " + scoreboardIn.getValueFromObjective(networkplayerinfo.getGameProfile().getName(), scoreObjectiveIn).getScorePoints());
+      if (scoreObjectiveIn != null && scoreObjectiveIn.getRenderType() != IScoreCriteria.EnumRenderType.HEARTS) {
+        nameWidth = mc.fontRendererObj.getStringWidth(" " + scoreboardIn.getOrCreateScore(networkplayerinfo.getGameProfile().getName(), scoreObjectiveIn).getScorePoints());
         j = Math.max(j, nameWidth);
       }
     }
@@ -81,7 +81,7 @@ public class EventRenderGame extends Gui {
     int l;
 
     if (scoreObjectiveIn != null) {
-      if (scoreObjectiveIn.getRenderType() == IScoreObjectiveCriteria.EnumRenderType.HEARTS) {
+      if (scoreObjectiveIn.getRenderType() == IScoreCriteria.EnumRenderType.HEARTS) {
         l = 90;
       } else {
         l = j;
@@ -166,7 +166,7 @@ public class EventRenderGame extends Gui {
         }
 
         if (networkplayerinfo1.getGameType() == WorldSettings.GameType.SPECTATOR) {
-          s1 = EnumChatFormatting.ITALIC + s1;
+          s1 = TextFormatting.ITALIC + s1;
           mc.fontRendererObj.drawStringWithShadow(s1, (float) j2, (float) k2, -1862270977);
         } else {
           mc.fontRendererObj.drawStringWithShadow(s1, (float) j2, (float) k2, -1);
@@ -177,7 +177,8 @@ public class EventRenderGame extends Gui {
         mc.getTextureManager().bindTexture(indicators);
         int indicatorRecIndex = RecMod.instance.isPlayerRecording(networkplayerinfo1.getGameProfile().getName()) ? IndexReference.ICON_RED_INDEX : IndexReference.ICON_GRAY_INDEX;
         int indicatorStrIndex = RecMod.instance.isPlayerStreaming(networkplayerinfo1.getGameProfile().getName()) ? IndexReference.ICON_GREEN_INDEX : IndexReference.ICON_GRAY_INDEX;
-        drawTexturedModalRect(j2 - (flag ? 9 : 0) + userWidth - INDICATOR_TOTAL + INDICATOR_PADDING, k2, indicatorRecIndex * 8, (int) Math.floor(indicatorRecIndex / 32) * 8 + IndexReference.RES_SSD, INDICATOR_WIDTH, INDICATOR_WIDTH);
+        if (indicatorRecIndex != IndexReference.ICON_DISABLE_INDEX)
+          drawTexturedModalRect(j2 - (flag ? 9 : 0) + userWidth - INDICATOR_TOTAL + INDICATOR_PADDING, k2, indicatorRecIndex * 8, (int) Math.floor(indicatorRecIndex / 32) * 8 + IndexReference.RES_SSD, INDICATOR_WIDTH, INDICATOR_WIDTH);
         drawTexturedModalRect(j2 - (flag ? 9 : 0) + userWidth - INDICATOR_TOTAL + INDICATOR_PADDING * 2 + INDICATOR_WIDTH, k2, indicatorStrIndex * 8, (int) Math.floor(indicatorStrIndex / 32) * 8 + IndexReference.RES_SSD, INDICATOR_WIDTH, INDICATOR_WIDTH);
 
         if (scoreObjectiveIn != null && networkplayerinfo1.getGameType() != WorldSettings.GameType.SPECTATOR) {

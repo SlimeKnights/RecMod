@@ -37,7 +37,6 @@ public class PacketUpdatePlayerStatus extends AbstractPacket {
 
   @Override
   public void handleClientSide(EntityPlayer player) {
-    //TODO non-temporary solution to NPE
     if (player == null)
       return;
 
@@ -49,6 +48,9 @@ public class PacketUpdatePlayerStatus extends AbstractPacket {
 
   @Override
   public void handleServerSide(EntityPlayer player) {
+    if (player == null)
+      return;
+
     RecMod.instance.updatePlayerInformation(this.player, type, flag);
 
     // Send the packet to all the players

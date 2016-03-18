@@ -21,8 +21,8 @@ public class PacketClientCommand extends AbstractPacket {
   public void encodeInto(ChannelHandlerContext ctx, ByteBuf buffer) {
     buffer.writeInt(params.length);
 
-    for (int i = 0; i < params.length; i++) {
-      ByteBufUtils.writeUTF8String(buffer, params[i]);
+    for (String param : params) {
+      ByteBufUtils.writeUTF8String(buffer, param);
     }
   }
 

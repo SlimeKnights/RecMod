@@ -9,8 +9,9 @@ import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.ChatComponentText;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentTranslation;
 
 public class CommandRec extends CommandBase {
 
@@ -26,9 +27,9 @@ public class CommandRec extends CommandBase {
 
   @Override
   public String getCommandUsage(ICommandSender icommandsender) {
-    icommandsender.addChatMessage(new ChatComponentText("\u00A7cRec Usage: "));
-    icommandsender.addChatMessage(new ChatComponentText("\u00A7c{no oprands} (displays an easy to use GUI)"));
-    icommandsender.addChatMessage(new ChatComponentText("\u00A7c<r/s> (toggle recording or streaming)"));
+    icommandsender.addChatMessage(new TextComponentTranslation("\u00A7cRec Usage: "));
+    icommandsender.addChatMessage(new TextComponentTranslation("\u00A7c{no oprands} (displays an easy to use GUI)"));
+    icommandsender.addChatMessage(new TextComponentTranslation("\u00A7c<r/s> (toggle recording or streaming)"));
     return "End Rec Usage";
   }
 
@@ -37,21 +38,21 @@ public class CommandRec extends CommandBase {
   }
 
   @Override
-  public void processCommand(ICommandSender icommandsender, String[] astring) throws CommandException {
+  public void execute(MinecraftServer server, ICommandSender icommandsender, String[] astring) throws CommandException {
     if (!(icommandsender instanceof EntityPlayer)) {
       throw new CommandException("Only players are allowed to perform this command.", new Object[0]);
     }
 
     EntityPlayer player = (EntityPlayer) icommandsender;
 
-    sendClientProcess(player, astring);
-
-    if (astring.length == 0) {
-    } else if (astring.length == 1 && (astring[0].equals("r") || astring[0].equals("s"))) {
-    } else {
-      onWrongUsage(icommandsender);
-      return;
+    if (astring.length != 0) {
+      if (astring.length != 1 || (!astring[0].equals("r") && !astring[0].equals("s"))) {
+        onWrongUsage(icommandsender);
+        return;
+      }
     }
+
+    sendClientProcess(player, astring);
   }
 
   public void sendClientProcess(EntityPlayer p, String[] params) {
@@ -62,9 +63,9 @@ public class CommandRec extends CommandBase {
   }
 
   @Override
-  public List addTabCompletionOptions(ICommandSender par1ICommandSender, String[] par2ArrayOfStr, BlockPos position) {
-    List l = new ArrayList();
-    if (par2ArrayOfStr.length == 1) {
+  public List<String> getTabCompletionOptions(MinecraftServer server, ICommandSender sender, String[] args, BlockPos position) {
+    List<String> l = new ArrayList<String>();
+    if (args.length == 1) {
       l.add("r");
       l.add("s");
     }
@@ -73,7 +74,7 @@ public class CommandRec extends CommandBase {
   }
 
   @Override
-  public boolean canCommandSenderUseCommand(ICommandSender sender) {
+  public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
     return true;
   }
 }
