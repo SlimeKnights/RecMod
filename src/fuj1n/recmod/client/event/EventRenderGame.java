@@ -1,9 +1,7 @@
 package fuj1n.recmod.client.event;
 
 import com.mojang.authlib.GameProfile;
-import fuj1n.recmod.RecMod;
-import fuj1n.recmod.lib.IndexReference;
-import java.util.List;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiPlayerTabOverlay;
@@ -22,6 +20,11 @@ import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
+import java.util.List;
+
+import fuj1n.recmod.RecMod;
+import fuj1n.recmod.lib.IndexReference;
+
 public class EventRenderGame extends Gui {
 
   private static final int INDICATOR_WIDTH = 8;
@@ -38,7 +41,7 @@ public class EventRenderGame extends Gui {
     Minecraft mc = Minecraft.getMinecraft();
     ResourceLocation indicators = Minecraft.isFancyGraphicsEnabled() ? indicatorsHigh : indicatorsLow;
 
-    if (event.type == ElementType.PLAYER_LIST) {
+    if(event.getType() == ElementType.PLAYER_LIST) {
       event.setCanceled(true);
 
       to = mc.ingameGUI.getTabList();
@@ -48,11 +51,11 @@ public class EventRenderGame extends Gui {
   }
 
   public void renderPlayerList(RenderGameOverlayEvent.Pre event, Minecraft mc, ResourceLocation indicators) {
-    int width = event.resolution.getScaledWidth();
+    int width = event.getResolution().getScaledWidth();
     Scoreboard scoreboardIn = mc.theWorld.getScoreboard();
     ScoreObjective scoreObjectiveIn = scoreboardIn.getObjectiveInDisplaySlot(0);
 
-    NetHandlerPlayClient nethandlerplayclient = mc.thePlayer.sendQueue;
+    NetHandlerPlayClient nethandlerplayclient = mc.thePlayer.connection;
     List<NetworkPlayerInfo> list = GuiPlayerTabOverlay.ENTRY_ORDERING.<NetworkPlayerInfo>sortedCopy(nethandlerplayclient.getPlayerInfoMap());
 
     int namePingGap = 0;
@@ -77,7 +80,7 @@ public class EventRenderGame extends Gui {
       ++userRows;
     }
 
-    boolean flag = mc.isIntegratedServerRunning() || mc.getNetHandler().getNetworkManager().getIsencrypted();
+    boolean flag = mc.isIntegratedServerRunning() || mc.getConnection().getNetworkManager().isEncrypted();
     int l;
 
     if (scoreObjectiveIn != null) {
@@ -211,7 +214,7 @@ public class EventRenderGame extends Gui {
     Minecraft mc = Minecraft.getMinecraft();
     ResourceLocation indicators = Minecraft.isFancyGraphicsEnabled() ? indicatorsHigh : indicatorsLow;
 
-    if (event.type == ElementType.ALL && RecMod.instance.showSelf && mc.currentScreen == null) {
+    if(event.getType() == ElementType.ALL && RecMod.instance.showSelf && mc.currentScreen == null) {
       int x;
       int y;
       switch (RecMod.instance.posMode) {
@@ -220,27 +223,27 @@ public class EventRenderGame extends Gui {
           y = 0;
           break;
         case 1:
-          x = event.resolution.getScaledWidth() - 32;
+          x = event.getResolution().getScaledWidth() - 32;
           y = 0;
           break;
         case 2:
-          x = event.resolution.getScaledWidth() / 2 - 16;
-          y = event.resolution.getScaledHeight() / 2 - 8;
+          x = event.getResolution().getScaledWidth() / 2 - 16;
+          y = event.getResolution().getScaledHeight() / 2 - 8;
           break;
         case 3:
           x = 0;
-          y = event.resolution.getScaledHeight() - 16;
+          y = event.getResolution().getScaledHeight() - 16;
           break;
         case 4:
-          x = event.resolution.getScaledWidth() - 32;
-          y = event.resolution.getScaledHeight() - 16;
+          x = event.getResolution().getScaledWidth() - 32;
+          y = event.getResolution().getScaledHeight() - 16;
           break;
         case 5:
-          x = event.resolution.getScaledWidth() / 2 - 16 + RecMod.instance.absX;
-          y = event.resolution.getScaledHeight() / 2 - 8 + RecMod.instance.absY;
+          x = event.getResolution().getScaledWidth() / 2 - 16 + RecMod.instance.absX;
+          y = event.getResolution().getScaledHeight() / 2 - 8 + RecMod.instance.absY;
           break;
         default:
-          x = event.resolution.getScaledWidth() - 32;
+          x = event.getResolution().getScaledWidth() - 32;
           y = 0;
       }
 

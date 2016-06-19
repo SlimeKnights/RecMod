@@ -4,7 +4,7 @@
   "name": "Recording Status Mod",
   "description": "Record/Stream status in the players list, /rec <r/s> to toggle",
   "version": "v1.5.2",
-  "mcversion": "1.9",
+  "mcversion": "1.9.4",
   "url": "",
   "updateUrl": "",
   "authors": [
