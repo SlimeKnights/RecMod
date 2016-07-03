@@ -15,7 +15,7 @@ import net.minecraft.scoreboard.ScoreObjective;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.WorldSettings;
+import net.minecraft.world.GameType;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -168,7 +168,7 @@ public class EventRenderGame extends Gui {
           j2 += 9;
         }
 
-        if (networkplayerinfo1.getGameType() == WorldSettings.GameType.SPECTATOR) {
+        if(networkplayerinfo1.getGameType() == GameType.SPECTATOR) {
           s1 = TextFormatting.ITALIC + s1;
           mc.fontRendererObj.drawStringWithShadow(s1, (float) j2, (float) k2, -1862270977);
         } else {
@@ -184,7 +184,7 @@ public class EventRenderGame extends Gui {
           drawTexturedModalRect(j2 - (flag ? 9 : 0) + userWidth - INDICATOR_TOTAL + INDICATOR_PADDING, k2, indicatorRecIndex * 8, (int) Math.floor(indicatorRecIndex / 32) * 8 + IndexReference.RES_SSD, INDICATOR_WIDTH, INDICATOR_WIDTH);
         drawTexturedModalRect(j2 - (flag ? 9 : 0) + userWidth - INDICATOR_TOTAL + INDICATOR_PADDING * 2 + INDICATOR_WIDTH, k2, indicatorStrIndex * 8, (int) Math.floor(indicatorStrIndex / 32) * 8 + IndexReference.RES_SSD, INDICATOR_WIDTH, INDICATOR_WIDTH);
 
-        if (scoreObjectiveIn != null && networkplayerinfo1.getGameType() != WorldSettings.GameType.SPECTATOR) {
+        if(scoreObjectiveIn != null && networkplayerinfo1.getGameType() != GameType.SPECTATOR) {
           int k5 = j2 + namePingGap + 1;
           int l5 = k5 + l;
 
