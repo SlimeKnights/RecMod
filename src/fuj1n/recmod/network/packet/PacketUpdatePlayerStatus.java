@@ -40,10 +40,7 @@ public class PacketUpdatePlayerStatus extends AbstractPacket {
     if (player == null)
       return;
 
-
-    if (!player.getName().equals(this.player)) {
-      RecMod.instance.updatePlayerInformation(this.player, type, flag);
-    }
+    RecMod.instance.updatePlayerInformation(this.player, type, flag);
   }
 
   @Override
