@@ -13,6 +13,8 @@ Public Builds
 ------------
 Latest public builds available from [CurseForge](http://minecraft.curseforge.com/projects/recording-status-mod).
 
+Old builds are now available in [Releases](https://github.com/SlimeKnights/RecMod/releases)
+
 Build Status
 ------------
 [![Build Status](https://dvs1.progwml6.com/jenkins/buildStatus/icon?job=RecMod)](https://dvs1.progwml6.com/jenkins/job/RecMod/)
