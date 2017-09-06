@@ -18,7 +18,7 @@ public class EventClientTick {
 
   @SubscribeEvent
   public void onTick(ClientTickEvent event) {
-    if (event.type == Type.CLIENT && event.phase == Phase.END && mc.theWorld == null && mc.thePlayer == null && RecMod.instance.mapsDirty) {
+    if (event.type == Type.CLIENT && event.phase == Phase.END && mc.world == null && mc.player == null && RecMod.instance.mapsDirty) {
 
       if (RecMod.instance.keepState) {
         String player = mc.getSession().getUsername();
@@ -31,15 +31,15 @@ public class EventClientTick {
       RecMod.instance.mapsDirty = false;
     }
 
-    if (event.type == Type.CLIENT && event.phase == Phase.START && mc.theWorld != null && mc.thePlayer != null && RecMod.instance.showMode == 3) {
-      String player = mc.thePlayer.getName();
+    if (event.type == Type.CLIENT && event.phase == Phase.START && mc.world != null && mc.world != null && RecMod.instance.showMode == 3) {
+      String player = mc.player.getName();
       RecMod.instance.showSelf = RecMod.instance.isPlayerRecording(player) || RecMod.instance.isPlayerStreaming(player);
     }
 
     if (!RecMod.instance.enableKeys) {
       return;
     }
-    if (event.type == Type.CLIENT && event.phase == Phase.START && mc.theWorld != null && mc.currentScreen == null) {
+    if (event.type == Type.CLIENT && event.phase == Phase.START && mc.world != null && mc.currentScreen == null) {
       keyTick();
     }
   }
@@ -52,8 +52,8 @@ public class EventClientTick {
     } else {
       if (recDown) {
         recDown = false;
-        RecMod.instance.updatePlayerInformation(mc.thePlayer.getName(), 0, !RecMod.instance.isPlayerRecording(mc.thePlayer.getName()));
-        RecMod.packetPipeline.sendToServer(new PacketUpdatePlayerStatus(mc.thePlayer.getName(), 0, RecMod.instance.isPlayerRecording(mc.thePlayer.getName())));
+        RecMod.instance.updatePlayerInformation(mc.player.getName(), 0, !RecMod.instance.isPlayerRecording(mc.player.getName()));
+        RecMod.packetPipeline.sendToServer(new PacketUpdatePlayerStatus(mc.player.getName(), 0, RecMod.instance.isPlayerRecording(mc.player.getName())));
       }
     }
 
@@ -64,8 +64,8 @@ public class EventClientTick {
     } else {
       if (strDown) {
         strDown = false;
-        RecMod.instance.updatePlayerInformation(mc.thePlayer.getName(), 1, !RecMod.instance.isPlayerStreaming(mc.thePlayer.getName()));
-        RecMod.packetPipeline.sendToServer(new PacketUpdatePlayerStatus(mc.thePlayer.getName(), 1, RecMod.instance.isPlayerStreaming(mc.thePlayer.getName())));
+        RecMod.instance.updatePlayerInformation(mc.player.getName(), 1, !RecMod.instance.isPlayerStreaming(mc.player.getName()));
+        RecMod.packetPipeline.sendToServer(new PacketUpdatePlayerStatus(mc.player.getName(), 1, RecMod.instance.isPlayerStreaming(mc.player.getName())));
       }
     }
   }

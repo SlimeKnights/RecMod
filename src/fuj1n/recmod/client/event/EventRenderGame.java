@@ -52,21 +52,21 @@ public class EventRenderGame extends Gui {
 
   public void renderPlayerList(RenderGameOverlayEvent.Pre event, Minecraft mc, ResourceLocation indicators) {
     int width = event.getResolution().getScaledWidth();
-    Scoreboard scoreboardIn = mc.theWorld.getScoreboard();
+    Scoreboard scoreboardIn = mc.world.getScoreboard();
     ScoreObjective scoreObjectiveIn = scoreboardIn.getObjectiveInDisplaySlot(0);
 
-    NetHandlerPlayClient nethandlerplayclient = mc.thePlayer.connection;
+    NetHandlerPlayClient nethandlerplayclient = mc.player.connection;
     List<NetworkPlayerInfo> list = GuiPlayerTabOverlay.ENTRY_ORDERING.<NetworkPlayerInfo>sortedCopy(nethandlerplayclient.getPlayerInfoMap());
 
     int namePingGap = 0;
     int j = 0;
 
     for (NetworkPlayerInfo networkplayerinfo : list) {
-      int nameWidth = mc.fontRendererObj.getStringWidth(to.getPlayerName(networkplayerinfo));
+      int nameWidth = mc.fontRenderer.getStringWidth(to.getPlayerName(networkplayerinfo));
       namePingGap = Math.max(namePingGap, nameWidth);
 
       if (scoreObjectiveIn != null && scoreObjectiveIn.getRenderType() != IScoreCriteria.EnumRenderType.HEARTS) {
-        nameWidth = mc.fontRendererObj.getStringWidth(" " + scoreboardIn.getOrCreateScore(networkplayerinfo.getGameProfile().getName(), scoreObjectiveIn).getScorePoints());
+        nameWidth = mc.fontRenderer.getStringWidth(" " + scoreboardIn.getOrCreateScore(networkplayerinfo.getGameProfile().getName(), scoreObjectiveIn).getScorePoints());
         j = Math.max(j, nameWidth);
       }
     }
@@ -101,18 +101,18 @@ public class EventRenderGame extends Gui {
     List<String> list2 = null;
 
     if (to.header != null) {
-      list1 = mc.fontRendererObj.listFormattedStringToWidth(to.header.getFormattedText(), width - 50);
+      list1 = mc.fontRenderer.listFormattedStringToWidth(to.header.getFormattedText(), width - 50);
 
       for (String s : list1) {
-        menuWidth = Math.max(menuWidth, mc.fontRendererObj.getStringWidth(s));
+        menuWidth = Math.max(menuWidth, mc.fontRenderer.getStringWidth(s));
       }
     }
 
     if (to.footer != null) {
-      list2 = mc.fontRendererObj.listFormattedStringToWidth(to.footer.getFormattedText(), width - 50);
+      list2 = mc.fontRenderer.listFormattedStringToWidth(to.footer.getFormattedText(), width - 50);
 
       for (String s2 : list2) {
-        menuWidth = Math.max(menuWidth, mc.fontRendererObj.getStringWidth(s2));
+        menuWidth = Math.max(menuWidth, mc.fontRenderer.getStringWidth(s2));
       }
     }
 
@@ -122,12 +122,12 @@ public class EventRenderGame extends Gui {
     menuWidth += INDICATOR_TOTAL * userRows;
 
     if (list1 != null) {
-      drawRect(width / 2 - menuWidth / 2 - 1, menuY - 1, width / 2 + menuWidth / 2 + 1, menuY + list1.size() * mc.fontRendererObj.FONT_HEIGHT, Integer.MIN_VALUE);
+      drawRect(width / 2 - menuWidth / 2 - 1, menuY - 1, width / 2 + menuWidth / 2 + 1, menuY + list1.size() * mc.fontRenderer.FONT_HEIGHT, Integer.MIN_VALUE);
 
       for (String s3 : list1) {
-        int i2 = mc.fontRendererObj.getStringWidth(s3);
-        mc.fontRendererObj.drawStringWithShadow(s3, (float) (width / 2 - i2 / 2), (float) menuY, -1);
-        menuY += mc.fontRendererObj.FONT_HEIGHT;
+        int i2 = mc.fontRenderer.getStringWidth(s3);
+        mc.fontRenderer.drawStringWithShadow(s3, (float) (width / 2 - i2 / 2), (float) menuY, -1);
+        menuY += mc.fontRenderer.FONT_HEIGHT;
       }
 
       ++menuY;
@@ -152,7 +152,7 @@ public class EventRenderGame extends Gui {
         GameProfile gameprofile = networkplayerinfo1.getGameProfile();
 
         if (flag) {
-          EntityPlayer entityplayer = mc.theWorld.getPlayerEntityByUUID(gameprofile.getId());
+          EntityPlayer entityplayer = mc.world.getPlayerEntityByUUID(gameprofile.getId());
           boolean flag1 = entityplayer != null && entityplayer.isWearing(EnumPlayerModelParts.CAPE) && (gameprofile.getName().equals("Dinnerbone") || gameprofile.getName().equals("Grumm"));
           mc.getTextureManager().bindTexture(networkplayerinfo1.getLocationSkin());
           int l2 = 8 + (flag1 ? 8 : 0);
@@ -170,9 +170,9 @@ public class EventRenderGame extends Gui {
 
         if(networkplayerinfo1.getGameType() == GameType.SPECTATOR) {
           s1 = TextFormatting.ITALIC + s1;
-          mc.fontRendererObj.drawStringWithShadow(s1, (float) j2, (float) k2, -1862270977);
+          mc.fontRenderer.drawStringWithShadow(s1, (float) j2, (float) k2, -1862270977);
         } else {
-          mc.fontRendererObj.drawStringWithShadow(s1, (float) j2, (float) k2, -1);
+          mc.fontRenderer.drawStringWithShadow(s1, (float) j2, (float) k2, -1);
         }
 
         // Indicator rendering
@@ -199,12 +199,12 @@ public class EventRenderGame extends Gui {
 
     if (list2 != null) {
       menuY = menuY + i4 * 9 + 1;
-      drawRect(width / 2 - menuWidth / 2 - 1, menuY - 1, width / 2 + menuWidth / 2 + 1, menuY + list2.size() * mc.fontRendererObj.FONT_HEIGHT, Integer.MIN_VALUE);
+      drawRect(width / 2 - menuWidth / 2 - 1, menuY - 1, width / 2 + menuWidth / 2 + 1, menuY + list2.size() * mc.fontRenderer.FONT_HEIGHT, Integer.MIN_VALUE);
 
       for (String s4 : list2) {
-        int j5 = mc.fontRendererObj.getStringWidth(s4);
-        mc.fontRendererObj.drawStringWithShadow(s4, (float) (width / 2 - j5 / 2), (float) menuY, -1);
-        menuY += mc.fontRendererObj.FONT_HEIGHT;
+        int j5 = mc.fontRenderer.getStringWidth(s4);
+        mc.fontRenderer.drawStringWithShadow(s4, (float) (width / 2 - j5 / 2), (float) menuY, -1);
+        menuY += mc.fontRenderer.FONT_HEIGHT;
       }
     }
   }
@@ -247,8 +247,8 @@ public class EventRenderGame extends Gui {
           y = 0;
       }
 
-      int indicatorRecIndex = RecMod.instance.isPlayerRecording(mc.thePlayer.getName()) ? IndexReference.ICON_RED_INDEX : IndexReference.ICON_GRAY_INDEX;
-      int indicatorStrIndex = RecMod.instance.isPlayerStreaming(mc.thePlayer.getName()) ? IndexReference.ICON_GREEN_INDEX : IndexReference.ICON_GRAY_INDEX;
+      int indicatorRecIndex = RecMod.instance.isPlayerRecording(mc.player.getName()) ? IndexReference.ICON_RED_INDEX : IndexReference.ICON_GRAY_INDEX;
+      int indicatorStrIndex = RecMod.instance.isPlayerStreaming(mc.player.getName()) ? IndexReference.ICON_GREEN_INDEX : IndexReference.ICON_GRAY_INDEX;
       mc.getTextureManager().bindTexture(indicators);
       drawTexturedModalRect(x, y, indicatorRecIndex * 16, (int) Math.floor(indicatorRecIndex / 16) * 16 + IndexReference.RES_SD, 16, 16);
       drawTexturedModalRect(x + 16, y, indicatorStrIndex * 16, (int) Math.floor(indicatorStrIndex / 16) * 16 + IndexReference.RES_SD, 16, 16);

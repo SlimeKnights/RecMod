@@ -24,6 +24,8 @@ public class PacketEndOfInitialTransmission extends AbstractPacket {
   @Override
   public void handleClientSide(EntityPlayer player) {
     //TODO non-temporary solution to NPE
+    System.out.println(player);
+
     if (player == null)
       return;
 

@@ -4,6 +4,7 @@ import fuj1n.recmod.RecMod;
 import fuj1n.recmod.network.packet.PacketClientCommand;
 import java.util.ArrayList;
 import java.util.List;
+
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -21,20 +22,20 @@ public class CommandRec extends CommandBase {
   }
 
   @Override
-  public String getCommandName() {
+  public String getName() {
     return "rec";
   }
 
   @Override
-  public String getCommandUsage(ICommandSender icommandsender) {
-    icommandsender.addChatMessage(new TextComponentTranslation("\u00A7cRec Usage: "));
-    icommandsender.addChatMessage(new TextComponentTranslation("\u00A7c{no oprands} (displays an easy to use GUI)"));
-    icommandsender.addChatMessage(new TextComponentTranslation("\u00A7c<r/s> (toggle recording or streaming)"));
+  public String getUsage(ICommandSender icommandsender) {
+    icommandsender.sendMessage(new TextComponentTranslation("\u00A7cRec Usage: "));
+    icommandsender.sendMessage(new TextComponentTranslation("\u00A7c{no oprands} (displays an easy to use GUI)"));
+    icommandsender.sendMessage(new TextComponentTranslation("\u00A7c<r/s> (toggle recording or streaming)"));
     return "End Rec Usage";
   }
 
   public void onWrongUsage(ICommandSender icommandsender) {
-    getCommandUsage(icommandsender);
+    getUsage(icommandsender);
   }
 
   @Override
@@ -63,7 +64,7 @@ public class CommandRec extends CommandBase {
   }
 
   @Override
-  public List<String> getTabCompletionOptions(MinecraftServer server, ICommandSender sender, String[] args, BlockPos position) {
+  public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, BlockPos position) {
     List<String> l = new ArrayList<String>();
     if (args.length == 1) {
       l.add("r");

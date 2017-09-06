@@ -7,7 +7,7 @@ import java.io.IOException;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.translation.I18n;
+import net.minecraft.client.resources.I18n;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
@@ -44,7 +44,7 @@ public class GuiSimple extends GuiContainer {
 
   @Override
   public void drawGuiContainerForegroundLayer(int par1, int par2) {
-    this.fontRendererObj.drawString(translate("recmod.interface.name") + stateNames[guiState], 8, 11, 4210752);
+    this.fontRenderer.drawString(translate("recmod.interface.name") + stateNames[guiState], 8, 11, 4210752);
     switch (guiState) {
       case 2:
 
@@ -117,8 +117,8 @@ public class GuiSimple extends GuiContainer {
         buttonList.add(new GuiButton(6, k + 8, l + 30 + buttonDelim * 2, buttonSize, 20, translate("recmod.gui.pane.interface.posMode").replace("$m", posModes[RecMod.instance.posMode])));
 
         if (RecMod.instance.posMode == 5) {
-          tfAbsX = new GuiNumTextField(fontRendererObj, k + 8 + smallButtonSize * 1, l + 30 + buttonDelim * 3, smallButtonSize, 20, -4096, 4096, RecMod.instance.absX);
-          tfAbsY = new GuiNumTextField(fontRendererObj, k + 8 + smallButtonSize * 1, l + 30 + buttonDelim * 4, smallButtonSize, 20, -2160, 2160, RecMod.instance.absY);
+          tfAbsX = new GuiNumTextField(fontRenderer, k + 8 + smallButtonSize * 1, l + 30 + buttonDelim * 3, smallButtonSize, 20, -4096, 4096, RecMod.instance.absX);
+          tfAbsY = new GuiNumTextField(fontRenderer, k + 8 + smallButtonSize * 1, l + 30 + buttonDelim * 4, smallButtonSize, 20, -2160, 2160, RecMod.instance.absY);
           buttonList.add(new GuiButton(7, k + 9, l + 30 + buttonDelim * 5, buttonSize, 20, translate("recmod.gui.pane.interface.savePos")));
         } else {
           tfAbsX = null;
@@ -143,7 +143,7 @@ public class GuiSimple extends GuiContainer {
     listenKeyType = -1;
 
     if (button.id == -1337) {
-      this.mc.thePlayer.closeScreen();
+      this.mc.player.closeScreen();
     }
 
     if (button.id >= 1594) {
@@ -210,7 +210,7 @@ public class GuiSimple extends GuiContainer {
         guiState = returnStates[guiState];
         createGui();
       } else {
-        this.mc.thePlayer.closeScreen();
+        this.mc.player.closeScreen();
       }
     } else if (listenKeyType != -1) {
       switch (listenKeyType) {
@@ -248,6 +248,6 @@ public class GuiSimple extends GuiContainer {
   }
 
   private String translate(String s) {
-    return I18n.translateToLocal(s);
+    return I18n.format(s);
   }
 }

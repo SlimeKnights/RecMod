@@ -42,7 +42,7 @@ public class PacketClientCommand extends AbstractPacket {
   @Override
   public void handleClientSide(EntityPlayer player) {
     if (params == null || params.length == 0) {
-      player.openGui(RecMod.instance, 0, player.worldObj, 0, 0, 0);
+      player.openGui(RecMod.instance, 0, player.world, 0, 0, 0);
     } else if (params.length == 1 && (params[0].equals("r") || params[0].equals("s"))) {
       RecMod.instance.updatePlayerInformation(player.getName(), params[0].equals("r") ? 0 : 1, params[0].equals("r") ? !RecMod.instance.isPlayerRecording(player.getName()) : !RecMod.instance.isPlayerStreaming(player.getName()));
 
