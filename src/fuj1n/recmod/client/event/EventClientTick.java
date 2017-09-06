@@ -19,15 +19,7 @@ public class EventClientTick {
   @SubscribeEvent
   public void onTick(ClientTickEvent event) {
     if (event.type == Type.CLIENT && event.phase == Phase.END && mc.world == null && mc.player == null && RecMod.instance.mapsDirty) {
-
-      if (RecMod.instance.keepState) {
-        String player = mc.getSession().getUsername();
-        RecMod.instance.recState = RecMod.instance.isPlayerRecording(player);
-        RecMod.instance.strState = RecMod.instance.isPlayerStreaming(player);
-      }
-
       RecMod.instance.clearMaps();
-
       RecMod.instance.mapsDirty = false;
     }
 

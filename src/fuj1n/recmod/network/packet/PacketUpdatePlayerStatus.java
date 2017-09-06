@@ -3,6 +3,7 @@ package fuj1n.recmod.network.packet;
 import fuj1n.recmod.RecMod;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 
@@ -39,6 +40,12 @@ public class PacketUpdatePlayerStatus extends AbstractPacket {
   public void handleClientSide(EntityPlayer player) {
     if (player == null)
       return;
+
+    if (player.getName().equals(this.player) && RecMod.instance.keepState) {
+      String username = Minecraft.getMinecraft().getSession().getUsername();
+      RecMod.instance.recState = RecMod.instance.isPlayerRecording(username);
+      RecMod.instance.strState = RecMod.instance.isPlayerStreaming(username);
+    }
 
     RecMod.instance.updatePlayerInformation(this.player, type, flag);
   }

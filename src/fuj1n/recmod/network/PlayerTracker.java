@@ -12,8 +12,6 @@ public class PlayerTracker {
     @SubscribeEvent
     public void onPlayerLogin(PlayerLoggedInEvent event) {
         if(FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) {
-            RecMod.instance.updatePlayerInformation(event.player.getName(), 0, false);
-            RecMod.instance.updatePlayerInformation(event.player.getName(), 1, false);
             RecMod.instance.sendDataToPlayer(event.player);
         }
     }
