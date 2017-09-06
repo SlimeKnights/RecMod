@@ -7,23 +7,27 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.*;
 import net.minecraftforge.fml.relauncher.Side;
 
-public class PlayerTracker {
+public class PlayerTracker
+{
 
-    @SubscribeEvent
-    public void onPlayerLogin(PlayerLoggedInEvent event) {
-        if(FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) {
+    @SubscribeEvent public void onPlayerLogin (PlayerLoggedInEvent event)
+    {
+        if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER)
+        {
             RecMod.instance.sendDataToPlayer(event.player);
         }
     }
 
-    @SubscribeEvent
-    public void onPlayerLogout(PlayerLoggedOutEvent event) {
-        if(FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) {
+    @SubscribeEvent public void onPlayerLogout (PlayerLoggedOutEvent event)
+    {
+        if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER)
+        {
             removePlayerName(event.player.getName());
         }
     }
 
-    public void removePlayerName(String name) {
+    private void removePlayerName (String name)
+    {
         RecMod.instance.removeUnneededData(name);
 
         PacketRemovePlayer pckt = new PacketRemovePlayer(name);

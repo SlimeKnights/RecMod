@@ -7,58 +7,62 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 
-public class PacketUpdatePlayerStatus extends AbstractPacket {
+public class PacketUpdatePlayerStatus extends AbstractPacket
+{
 
-  private String player;
-  private int type;
-  private boolean flag;
+    private String player;
+    private int type;
+    private boolean flag;
 
-  public PacketUpdatePlayerStatus(String player, int type, boolean flag) {
-    this.player = player;
-    this.type = type;
-    this.flag = flag;
-  }
-
-  public PacketUpdatePlayerStatus() {
-  }
-
-  @Override
-  public void encodeInto(ChannelHandlerContext ctx, ByteBuf buffer) {
-    ByteBufUtils.writeUTF8String(buffer, player);
-    buffer.writeInt(type);
-    buffer.writeBoolean(flag);
-  }
-
-  @Override
-  public void decodeInto(ChannelHandlerContext ctx, ByteBuf buffer) {
-    player = ByteBufUtils.readUTF8String(buffer);
-    type = buffer.readInt();
-    flag = buffer.readBoolean();
-  }
-
-  @Override
-  public void handleClientSide(EntityPlayer player) {
-    if (player == null)
-      return;
-
-    if (player.getName().equals(this.player) && RecMod.instance.keepState) {
-      String username = Minecraft.getMinecraft().getSession().getUsername();
-      RecMod.instance.recState = RecMod.instance.isPlayerRecording(username);
-      RecMod.instance.strState = RecMod.instance.isPlayerStreaming(username);
+    public PacketUpdatePlayerStatus (String player, int type, boolean flag)
+    {
+        this.player = player;
+        this.type = type;
+        this.flag = flag;
     }
 
-    RecMod.instance.updatePlayerInformation(this.player, type, flag);
-  }
+    public PacketUpdatePlayerStatus ()
+    {
+    }
 
-  @Override
-  public void handleServerSide(EntityPlayer player) {
-    if (player == null)
-      return;
+    @Override public void encodeInto (ChannelHandlerContext ctx, ByteBuf buffer)
+    {
+        ByteBufUtils.writeUTF8String(buffer, player);
+        buffer.writeInt(type);
+        buffer.writeBoolean(flag);
+    }
 
-    RecMod.instance.updatePlayerInformation(this.player, type, flag);
+    @Override public void decodeInto (ChannelHandlerContext ctx, ByteBuf buffer)
+    {
+        player = ByteBufUtils.readUTF8String(buffer);
+        type = buffer.readInt();
+        flag = buffer.readBoolean();
+    }
 
-    // Send the packet to all the players
-    RecMod.packetPipeline.sendToAll(this);
-  }
+    @Override public void handleClientSide (EntityPlayer player)
+    {
+        if (player == null)
+            return;
+
+        if (player.getName().equals(this.player) && RecMod.instance.keepState)
+        {
+            String username = Minecraft.getMinecraft().getSession().getUsername();
+            RecMod.instance.recState = RecMod.instance.isPlayerRecording(username);
+            RecMod.instance.strState = RecMod.instance.isPlayerStreaming(username);
+        }
+
+        RecMod.instance.updatePlayerInformation(this.player, type, flag);
+    }
+
+    @Override public void handleServerSide (EntityPlayer player)
+    {
+        if (player == null)
+            return;
+
+        RecMod.instance.updatePlayerInformation(this.player, type, flag);
+
+        // Send the packet to all the players
+        RecMod.packetPipeline.sendToAll(this);
+    }
 
 }
