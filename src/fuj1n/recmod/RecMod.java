@@ -17,7 +17,7 @@ import net.minecraftforge.fml.relauncher.*;
 import java.io.File;
 import java.util.HashMap;
 
-@Mod(name = "Recording Status Mod", version = "v1.5.2", modid = "fuj1n.recmod", acceptableRemoteVersions = "*") public class RecMod
+@Mod(name = "Recording Status Mod", version = "v1.5.2.1", modid = "fuj1n.recmod", acceptableRemoteVersions = "*") public class RecMod
 {
 
     @Instance("fuj1n.recmod") public static RecMod instance;

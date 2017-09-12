@@ -1,20 +1,17 @@
 package fuj1n.recmod.client.gui;
 
 import fuj1n.recmod.RecMod;
-import fuj1n.recmod.inventory.ContainerDummy;
 import fuj1n.recmod.network.packet.PacketUpdatePlayerStatus;
-import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.client.gui.*;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.opengl.GL11;
 
 import java.io.IOException;
 
-public class GuiSimple extends GuiContainer
+public class GuiSimple extends GuiScreen
 {
-
     public String boundPlayer;
 
     public int guiState = 0;
@@ -37,10 +34,13 @@ public class GuiSimple extends GuiContainer
     public GuiNumTextField tfAbsX;
     public GuiNumTextField tfAbsY;
 
+    /** The X size of the inventory window in pixels. */
+    protected int xSize = 176;
+    /** The Y size of the inventory window in pixels. */
+    protected int ySize = 166;
+
     public GuiSimple (String boundPlayer)
     {
-        super(new ContainerDummy());
-
         this.boundPlayer = boundPlayer;
 
         if (stateNames.length != returnStates.length)
@@ -49,33 +49,48 @@ public class GuiSimple extends GuiContainer
         }
     }
 
-    @Override public void drawGuiContainerForegroundLayer (int par1, int par2)
+    @Override public void drawScreen(int mouseX, int mouseY, float partialTicks){
+        int guiLeft = (this.width - this.xSize) / 2;
+        int guiTop = (this.height - this.ySize) / 2;
+
+        this.drawDefaultBackground();
+
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(guiLeft, guiTop, 0.0F);
+
+        this.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
+        GlStateManager.translate(-guiLeft, -guiTop, 0.0F);
+        super.drawScreen(mouseX, mouseY, partialTicks);
+        GlStateManager.translate(guiLeft, guiTop, 0.0F);
+        this.drawGuiContainerForegroundLayer(mouseX, mouseY);
+
+        GlStateManager.popMatrix();
+    }
+
+    private void drawGuiContainerForegroundLayer (int par1, int par2)
     {
         this.fontRenderer.drawString(translate("recmod.interface.name") + stateNames[guiState], 8, 11, 4210752);
         switch (guiState)
         {
         case 2:
 
-            GL11.glPopMatrix();
+            GlStateManager.popMatrix();
             if (tfAbsX != null && tfAbsY != null)
             {
                 tfAbsX.draw("X Position: ");
                 tfAbsY.draw("Y Position: ");
             }
-            GL11.glPushMatrix();
+            GlStateManager.pushMatrix();
             break;
         case 4:
             break;
         }
     }
 
-    @Override public void drawGuiContainerBackgroundLayer (float par1, int par2, int par3)
+    private void drawGuiContainerBackgroundLayer (float par1, int par2, int par3)
     {
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         this.mc.getTextureManager().bindTexture(background);
-        int k = (this.width - this.xSize) / 2;
-        int l = (this.height - this.ySize) / 2;
-        this.drawTexturedModalRect(k, l, 0, 0, this.xSize, this.ySize);
+        this.drawTexturedModalRect(0, 0, 0, 0, this.xSize, this.ySize);
     }
 
     @Override public void initGui ()
