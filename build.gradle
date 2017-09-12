@@ -33,7 +33,6 @@ repositories {
     }
 }
 
-
 apply plugin: 'net.minecraftforge.gradle.forge'
 // define the properties file
 ext.configFile = file "build.properties"
@@ -44,62 +43,19 @@ configFile.withReader {
     prop.load(it)
     project.ext.config = new ConfigSlurper().parse prop
 }
-ext.artifact_version_override = 'NotUsed'
-//gitignored config file -- if this has the entry for override it will override the version for local builds
-//create a file called version.properties with the line artifact_version_override=NotUsed
-//replace NotUsed w/ version #'s for manual local overrides
-ext.configFile2 = file "version.properties"
-if (configFile2.exists()) {
-    configFile2.withReader {
-        def prop2 = new Properties()
-        prop2.load(it)
-        ext.GIVersionFL = new ConfigSlurper().parse prop2
-        if (GIVersionFL != null) {
-            project.artifact_version_override = GIVersionFL.artifact_version_override
-        }
-    }
-}
 
-// sets version to the slimeKnights default version format
-task buildInfo {
-    def cmd = "git rev-parse --short HEAD"
-    def proc = cmd.execute()
-    proc.waitFor()
-    if (proc.exitValue() == 0) {
-        ext.revision = proc.text.trim()
-    } else {
-        ext.revision = "GITBORK"
-    }
-
-    if (System.getenv().BUILD_NUMBER != null) {
-        ext.buildNum = System.getenv().BUILD_NUMBER
-    } else {
-        ext.buildNum = "DEV"
-    }
-}
-ext.artifact_version = 'NFG'
-if (System.getenv().ARTIFACT_VERSION == null && artifact_version_override == 'NotUsed') {
-    artifact_version = "${project.buildInfo.buildNum}.${project.buildInfo.revision}"
-}
-if (System.getenv().ARTIFACT_VERSION != null && artifact_version_override == 'NotUsed') {
-    artifact_version = "${system.getenv().ARTIFACT_VERSION}"
-}
-if (artifact_version_override != 'NotUsed') {
-    artifact_version = "${artifact_version_override}"
-}
-version = "${config.minecraft_version}-${artifact_version}"
+version = "${config.minecraft_version}-${config.mod_version}"
 
 minecraft {
     version = config.minecraft_version + "-" + config.forge_version
     runDir = 'run/'
-    replace '${version}', project.version
+    replace '${version}', config.mod_version
     // the mappings can be changed at any time, and must be in the following format.
     // snapshot_YYYYMMDD   snapshot are built nightly.
-    // stable_#            stables are built at the discretion of the MCP team.
+    // stable_#			stables are built at the discretion of the MCP team.
     // Use non-default mappings at your own risk. they may not allways work.
     // simply re-run your setup task after changing the mappings to update your workspace.
     mappings = config.mappings_version
-
 }
 
 
@@ -113,20 +69,24 @@ sourceSets {
         }
     }
 }
-processResources
-        {
-            // replace stuff in text files, not binary ones.
-            from(sourceSets.main.resources.srcDirs) {
-                include '**/*.info'
-                // replace version and MCVersion
-                expand 'version': artifact_version, 'MCversion': config.minecraft_version
-            }
 
-            // copy everything else, thats not text
-            from(sourceSets.main.resources.srcDirs) {
-                exclude '**/*.info'
-            }
-        }
+processResources {
+    // this will ensure that this task is redone when the versions change.
+    inputs.property "version", config.mod_version
+    inputs.property "MCversion", config.minecraft_version
+
+    // replace stuff in mcmod.info
+    from(sourceSets.main.resources.srcDirs) {
+        include 'mcmod.info'
+        // replace version and MCversion
+        expand 'version': config.mod_version, 'MCversion': config.minecraft_version
+    }
+
+    // copy everything else
+    from(sourceSets.main.resources.srcDirs) {
+        exclude 'mcmod.info'
+    }
+}
 
 // Add Coremod Manifest
 jar {
@@ -143,7 +103,7 @@ task deobfJar(type: Jar) {
         attributes 'FMLAT': 'RecMod_at.cfg'
     }
 }
+
 artifacts {
     archives deobfJar
 }
-
