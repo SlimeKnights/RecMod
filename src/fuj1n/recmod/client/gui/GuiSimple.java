@@ -5,8 +5,9 @@ import fuj1n.recmod.network.packet.PacketUpdatePlayerStatus;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.util.ResourceLocation;
-import org.lwjgl.input.Keyboard;
+import net.minecraft.util.*;
+import org.lwjgl.LWJGLException;
+import org.lwjgl.input.*;
 
 import java.io.IOException;
 
@@ -301,6 +302,19 @@ public class GuiSimple extends GuiScreen
                 }
                 break;
             }
+        }
+    }
+
+    @Override public void updateScreen()
+    {
+        try
+        {
+            if(Mouse.getNativeCursor() != null)
+                Mouse.setNativeCursor(null);
+        }
+        catch (LWJGLException e)
+        {
+            e.printStackTrace();
         }
     }
 
