@@ -18,3 +18,7 @@ Old builds are now available in [Releases](https://github.com/SlimeKnights/RecMo
 Build Status
 ------------
 [![Build Status](https://dvs1.progwml6.com/jenkins/buildStatus/icon?job=RecMod)](https://dvs1.progwml6.com/jenkins/job/RecMod/)
+
+## Further Development
+
+SlimeKnights have moved onto 1.16+ for mod development and we have no immediate plans to port this mod, so this repository has been locked. If you have further issues, feel free to make a fork of the mod.
